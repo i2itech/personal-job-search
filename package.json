@@ -1,0 +1,35 @@
+{
+  "name": "personal-job-search",
+  "version": "1.0.0",
+  "description": "Assistant Api for job search",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/i2itech/personal-job-search.git"
+  },
+  "keywords": [
+    "resume",
+    "job",
+    "job",
+    "search",
+    "notion"
+  ],
+  "author": "denzellew",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/i2itech/personal-job-search/issues"
+  },
+  "homepage": "https://github.com/i2itech/personal-job-search#readme",
+  "devDependencies": {
+    "netlify-cli": "^18.1.0",
+    "tsc-watch": "^6.2.1",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@netlify/functions": "^3.0.0"
+  }
+}

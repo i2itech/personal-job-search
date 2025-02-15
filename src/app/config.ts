@@ -4,8 +4,8 @@ export interface AppConfig {
   notion: NotionConfig;
 }
 
-export const appConfig: AppConfig = {
+export default {
   notion: {
     api_key: process.env.NOTION_API_KEY || "",
   },
-};
+} as AppConfig;

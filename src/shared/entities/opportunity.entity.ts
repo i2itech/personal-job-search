@@ -1,8 +1,6 @@
-import { NotionEntity } from "../../vendors/notion/decorators/notion-entity.decorator";
 import { CompanyEntity } from "./company.entity";
 import { ContactEntity } from "./contact.entity";
 
-@NotionEntity({ database_id: "your-database-id-here" })
 export class OpportunityEntity {
   constructor(partial: Partial<OpportunityEntity> = {}) {
     Object.assign(this, partial);

@@ -16,6 +16,7 @@ export default async (req: Request, context: Context) => {
     return new Response(
       JSON.stringify({
         message: "Application submitted successfully",
+        body,
       }),
       {
         status: 200,

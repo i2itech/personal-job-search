@@ -7,7 +7,7 @@ export class CompanyEntity {
 
   id: string;
   name: string;
-  contacts: ContactEntity[];
-  website_url: string;
-  linkedin_url: string;
+  contacts: ContactEntity[] = [];
+  website_url?: string;
+  linkedin_url?: string;
 }

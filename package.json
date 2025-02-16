@@ -4,7 +4,9 @@
   "description": "Assistant Api for job search",
   "main": "index.js",
   "scripts": {
-    "test": "test",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "start": "tsc --watch",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
@@ -28,18 +30,23 @@
   },
   "homepage": "https://github.com/i2itech/personal-job-search#readme",
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
     "eslint": "^9.20.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "jest": "^29.7.0",
     "netlify-cli": "^18.1.0",
     "prettier": "^3.5.1",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "tsc-watch": "^6.2.1",
     "typescript": "^5.7.3"
   },
   "dependencies": {
     "@netlify/functions": "^3.0.0",
-    "@notionhq/client": "^2.2.15"
+    "@notionhq/client": "^2.2.15",
+    "reflect-metadata": "^0.2.2"
   }
 }

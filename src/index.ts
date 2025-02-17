@@ -5,8 +5,8 @@ const jobApplicationService = new JobApplicationService();
 
 const main = async () => {
   const jobApplication = await jobApplicationService.import({
-    company_name: "Trilogy 2",
-    job_title: "AI Super Engineer 2",
+    company_name: "Trilogy",
+    job_title: "AI Super Engineer",
   });
 
   console.log(jobApplication);

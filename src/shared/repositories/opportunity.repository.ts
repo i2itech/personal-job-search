@@ -147,11 +147,16 @@ export class OpportunityRepository {
             relation: [{ id: opportunity.company_id }],
           },
         }),
+        ...(opportunity.pay_type && {
+          "Pay Type": { type: "select", select: { name: opportunity.pay_type } },
+        }),
         ...(opportunity.posting_url && {
           "Posting URL": { url: opportunity.posting_url },
         }),
         ...(opportunity.job_description && {
-          "Job Description": { rich_text: [{ text: { content: opportunity.job_description } }] },
+          "Job Description": {
+            rich_text: opportunity.job_description.split("\n\n").map((line) => ({ text: { content: `${line}\n\n` } })),
+          },
         }),
         ...(opportunity.resume && {
           Resume: { rich_text: [{ text: { content: opportunity.resume } }] },

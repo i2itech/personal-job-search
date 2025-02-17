@@ -4,6 +4,8 @@
   "description": "Assistant Api for job search",
   "main": "index.js",
   "scripts": {
+    "dev": "netlify dev",
+    "debug": "NODE_OPTIONS=--inspect netlify dev",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
@@ -47,6 +49,7 @@
   "dependencies": {
     "@netlify/functions": "^3.0.0",
     "@notionhq/client": "^2.2.15",
+    "dotenv": "^16.4.7",
     "reflect-metadata": "^0.2.2"
   }
 }

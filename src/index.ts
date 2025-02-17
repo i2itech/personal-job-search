@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { JobApplicationService } from "./job-application/job-application.service";
 
 const jobApplicationService = new JobApplicationService();

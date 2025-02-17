@@ -1,8 +1,9 @@
+import { CreatePageParameters } from "@notionhq/client/build/src/api-endpoints";
 import { NotionClient } from "../../vendors/notion/notion.client";
 import { OpportunityEntity, OpportunityType } from "../entities/opportunity.entity";
 
+type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 export class OpportunityRepository {
-  private readonly databaseId: string = "f7dc427eca374fa3b91279e01cbed5eb";
   constructor(private readonly client: NotionClient = new NotionClient()) {}
 
   async findMatchingOpportunity({
@@ -84,11 +85,18 @@ export class OpportunityRepository {
       or: [...titleCompanyFilter, ...titleCompanyPostingUrlFilter],
     };
     const response = await this.client.databases.query({
-      database_id: this.databaseId,
+      database_id: OpportunityEntity.DatabaseId,
       filter: filter,
     });
 
     return response.results.map(this.notionRowToOpportunityEntity);
+  }
+
+  async createOpportunity(opportunity: CreateOpportunityRequest) {
+    const request = this.opportunityEntityToNotionRow(opportunity);
+    const response = await this.client.pages.create(request);
+
+    return this.notionRowToOpportunityEntity(response);
   }
 
   private notionRowToOpportunityEntity(row: any): OpportunityEntity {
@@ -117,5 +125,42 @@ export class OpportunityRepository {
       // Note: Company and primary_contacts would need to be populated separately
       // as they are relations that require additional queries
     });
+  }
+
+  private opportunityEntityToNotionRow(opportunity: CreateOpportunityRequest): CreatePageParameters {
+    return {
+      parent: {
+        database_id: OpportunityEntity.DatabaseId,
+      },
+      properties: {
+        Title: { title: [{ text: { content: opportunity.title } }] },
+        Type: { type: "select", select: { name: opportunity.type } },
+        ...(opportunity.cycle && { Cycle: { type: "select", select: { name: opportunity.cycle } } }),
+        ...(opportunity.company_id && {
+          Company: {
+            type: "relation",
+            relation: [{ id: opportunity.company_id }],
+          },
+        }),
+        ...(opportunity.posting_url && {
+          "Posting URL": { url: opportunity.posting_url },
+        }),
+        ...(opportunity.job_description && {
+          "Job Description": { rich_text: [{ text: { content: opportunity.job_description } }] },
+        }),
+        ...(opportunity.resume && {
+          Resume: { rich_text: [{ text: { content: opportunity.resume } }] },
+        }),
+        ...(opportunity.cover_letter && {
+          "Cover Letter": { rich_text: [{ text: { content: opportunity.cover_letter } }] },
+        }),
+        ...(opportunity.min_estimated_value && {
+          "Min Estimated Value": { number: opportunity.min_estimated_value },
+        }),
+        ...(opportunity.max_estimated_value && {
+          "Max Estimated Value": { number: opportunity.max_estimated_value },
+        }),
+      },
+    };
   }
 }

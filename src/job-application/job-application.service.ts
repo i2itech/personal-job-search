@@ -1,13 +1,12 @@
-import { OpportunityRepository } from "../shared/repositories/opportunity.repository";
-import { NotionDatabase } from "../vendors/notion/notion-database";
-import { ImportJobApplicationRequest } from "./types";
 import appConfig from "../app/config";
 import { OpportunityType } from "../shared/entities/opportunity.entity";
+import { OpportunityRepository } from "../shared/repositories/opportunity.repository";
+import { ImportJobApplicationRequest } from "./types";
 
 export class JobApplicationService {
   private currentPeriod: string = appConfig.job_application.current_cycle;
 
-  constructor(private readonly opportunityRepository: OpportunityRepository) {}
+  constructor(private readonly opportunityRepository: OpportunityRepository = new OpportunityRepository()) {}
 
   async import(application: ImportJobApplicationRequest) {
     // Try to find existing job application for this period

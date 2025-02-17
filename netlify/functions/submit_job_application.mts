@@ -1,5 +1,5 @@
 import { Config, Context } from "@netlify/functions";
-
+import { JobApplicationService } from "../../src/job-application/job-application.service";
 export default async (req: Request, context: Context) => {
   // Only allow POST requests
   if (req.method !== "POST") {
@@ -10,13 +10,16 @@ export default async (req: Request, context: Context) => {
     // Parse the request body
     const body = await req.json();
 
+    const jobApplicationService = new JobApplicationService();
+    const jobApplication = await jobApplicationService.import(body);
+
     // TODO: Add your job application processing logic here
     // For example: save to database, send notifications, etc.
 
     return new Response(
       JSON.stringify({
         message: "Application submitted successfully",
-        body,
+        jobApplication,
       }),
       {
         status: 200,

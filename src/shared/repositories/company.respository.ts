@@ -16,12 +16,12 @@ export class CompanyRepository {
   }) {
     const filterOptions = [];
 
-    const nameFilter = {
+    filterOptions.push({
       property: "Name",
       rich_text: {
         contains: name,
       },
-    };
+    });
 
     if (website_url) {
       filterOptions.push({
@@ -72,6 +72,7 @@ export class CompanyRepository {
       name: properties.Name.title[0].plain_text,
       website_url: properties["Website"].url,
       linkedin_url: properties["LinkedIn"].url,
+      is_draft: properties["Is Draft"].checkbox,
     });
   }
 
@@ -82,12 +83,17 @@ export class CompanyRepository {
       },
       properties: {
         Name: { title: [{ text: { content: company.name } }] },
-        Website: {
-          url: company.website_url || null,
-        },
-        LinkedIn: {
-          url: company.linkedin_url || null,
-        },
+        ...(company.website_url && {
+          Website: {
+            url: company.website_url,
+          },
+        }),
+        ...(company.linkedin_url && {
+          LinkedIn: {
+            url: company.linkedin_url,
+          },
+        }),
+        ...(company.is_draft && { "Is Draft": { checkbox: company.is_draft } }),
       },
     };
   }

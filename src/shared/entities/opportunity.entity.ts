@@ -28,6 +28,7 @@ export class OpportunityEntity {
   pay_type?: string;
   cycle?: string;
   results?: string;
+  is_draft?: boolean;
 }
 
 export enum OpportunityType {

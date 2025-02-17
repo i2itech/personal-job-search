@@ -27,7 +27,7 @@ export class JobApplicationService {
 
   private findExistingJobApplication(application: ImportJobApplicationRequest) {
     // Try to find existing job application for this period
-    const existingApplication = this.opportunityRepository.findMatchingOpportunity({
+    const existingApplication = this.opportunityRepository.findOneMatchingOpportunity({
       type: OpportunityType.JOB_APPLICATION,
       cycle: this.currentCycle,
       title: application.job_title,
@@ -51,6 +51,7 @@ export class JobApplicationService {
         name: application.company_name,
         website_url: application.company_website_url,
         linkedin_url: application.company_linkedin_url,
+        is_draft: true,
       });
     }
 
@@ -62,6 +63,7 @@ export class JobApplicationService {
       job_description: application.job_description,
       posting_url: application.job_posting_url,
       pay_type: application.pay_type,
+      is_draft: true,
     });
 
     return newJobApplication;

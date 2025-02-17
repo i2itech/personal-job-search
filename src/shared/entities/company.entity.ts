@@ -11,4 +11,5 @@ export class CompanyEntity {
   contacts?: ContactEntity[] = [];
   website_url?: string;
   linkedin_url?: string;
+  is_draft?: boolean;
 }

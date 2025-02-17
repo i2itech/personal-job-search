@@ -6,7 +6,7 @@ type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 export class OpportunityRepository {
   constructor(private readonly client: NotionClient = new NotionClient()) {}
 
-  async findMatchingOpportunity({
+  async findOneMatchingOpportunity({
     type,
     title,
     company_name,
@@ -89,7 +89,11 @@ export class OpportunityRepository {
       filter: filter,
     });
 
-    return response.results.map(this.notionRowToOpportunityEntity);
+    if (response.results.length > 0) {
+      return this.notionRowToOpportunityEntity(response.results[0]);
+    }
+
+    return null;
   }
 
   async createOpportunity(opportunity: CreateOpportunityRequest) {
@@ -122,6 +126,7 @@ export class OpportunityRepository {
       cycle: properties.Cycle.select?.name,
       results: properties.Results.rich_text.map((text: any) => text.plain_text).join(""),
       company_id: properties.Company.relation[0]?.id,
+      is_draft: properties["Is Draft"].checkbox,
       // Note: Company and primary_contacts would need to be populated separately
       // as they are relations that require additional queries
     });
@@ -160,6 +165,7 @@ export class OpportunityRepository {
         ...(opportunity.max_estimated_value && {
           "Max Estimated Value": { number: opportunity.max_estimated_value },
         }),
+        ...(opportunity.is_draft && { "Is Draft": { checkbox: opportunity.is_draft } }),
       },
     };
   }

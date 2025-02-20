@@ -50,6 +50,7 @@
     "@netlify/functions": "^3.0.0",
     "@notionhq/client": "^2.2.15",
     "dotenv": "^16.4.7",
+    "puppeteer": "^24.2.1",
     "reflect-metadata": "^0.2.2"
   }
 }

@@ -1,6 +1,23 @@
 export interface JobApplicationConfig {
   current_cycle: string;
+  personal_info: JobApplicationPersonalInfo;
 }
+
+export interface JobApplicationPersonalInfo {
+  name: string;
+  phone: string;
+  email: string;
+  linkedin_url: string;
+  github_url: string;
+  education: JobApplicationEducation;
+}
+
+export type JobApplicationEducation = {
+  school: string;
+  location: string;
+  degree: string;
+  minor: string;
+};
 
 export type ImportJobApplicationRequest = {
   company_name: string;

@@ -19,7 +19,7 @@ export default async (req: Request, context: Context) => {
 const generateResume = async (body: GenerateResumeRequest) => {
   try {
     const resumeService = new ResumeService();
-    const resume = await resumeService.generateResume();
+    const resume = await resumeService.generateResume(body);
 
     return new Response(resume, {
       status: 200,

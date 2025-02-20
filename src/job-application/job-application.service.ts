@@ -84,6 +84,4 @@ export class JobApplicationService {
 
     return newJobApplication;
   }
-
-  private async updateJobApplication(application: UpdateJobApplication) {}
 }

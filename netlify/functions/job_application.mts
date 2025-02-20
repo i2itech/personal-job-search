@@ -1,6 +1,11 @@
 import { Config, Context } from "@netlify/functions";
 import { JobApplicationService } from "../../src/job-application/job-application.service";
 import { ImportJobApplicationRequest, UpdateJobApplication } from "../../src/job-application/types";
+
+export const config: Config = {
+  path: "/api/v1/job-application",
+};
+
 export default async (req: Request, context: Context) => {
   switch (req.method) {
     case "POST": {
@@ -16,7 +21,7 @@ export default async (req: Request, context: Context) => {
   }
 };
 
-export const importJobApplication = async (body: ImportJobApplicationRequest) => {
+const importJobApplication = async (body: ImportJobApplicationRequest) => {
   try {
     const jobApplicationService = new JobApplicationService();
     const jobApplication = await jobApplicationService.import(body);
@@ -49,7 +54,7 @@ export const importJobApplication = async (body: ImportJobApplicationRequest) =>
   }
 };
 
-export const updateJobApplication = async (body: UpdateJobApplication) => {
+const updateJobApplication = async (body: UpdateJobApplication) => {
   try {
     const jobApplicationService = new JobApplicationService();
     const jobApplication = await jobApplicationService.update(body);
@@ -80,8 +85,4 @@ export const updateJobApplication = async (body: UpdateJobApplication) => {
       }
     );
   }
-};
-
-export const config: Config = {
-  path: "/api/v1/job-application",
 };

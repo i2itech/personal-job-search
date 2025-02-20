@@ -20,13 +20,7 @@ export type UpdateJobApplication = {
   job_analysis?: string;
 };
 
-export type UpdateJobResume = {
-  job_application_id: string;
-  summary: string;
-  skill_sets: ResumeSkillSet[];
-  work_experience: ResumeWorkExperience[];
-};
-
+// Resume Types
 export enum ResumeSkillSetType {
   PROFESSIONAL_EXPERTISE = "Professional Expertise",
   LANGUAGES = "Languages",
@@ -56,4 +50,11 @@ export type ResumeWorkExperience = {
   key_technologies: string[];
   experiences: string[];
   order: number;
+};
+
+export type GenerateResumeRequest = {
+  job_application_id: string;
+  summary: string;
+  skill_sets: ResumeSkillSet[];
+  work_experience: ResumeWorkExperience[];
 };

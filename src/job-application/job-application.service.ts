@@ -28,13 +28,17 @@ export class JobApplicationService {
   async update(application: UpdateJobApplication) {
     const { job_application_id, resume, cover_letter, job_analysis } = application;
     if (!job_application_id || (!resume && !cover_letter && !job_analysis)) {
-      throw new Error("Invalid job application request");
+      throw new Error("Invalid update job application request");
     }
     // Try to find existing job application for this period
-    const existingApplication = await this.findExistingJobApplication(application);
+    const updatedApplication = await this.opportunityRepository.updateOpportunity({
+      id: job_application_id,
+      resume,
+      cover_letter,
+      job_analysis,
+    });
 
-    // If not found, create a new job application
-    const newApplication = await this.createNewJobApplication(application);
+    return updatedApplication;
   }
 
   private findExistingJobApplication(application: ImportJobApplicationRequest) {

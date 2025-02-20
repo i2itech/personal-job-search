@@ -19,6 +19,7 @@ export class OpportunityEntity {
   lead_status?: string;
   tags?: string[] = [];
   job_description?: string;
+  job_analysis?: string;
   resume?: string;
   cover_letter?: string;
   min_estimated_value?: number;

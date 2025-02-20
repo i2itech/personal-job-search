@@ -2,7 +2,7 @@ import appConfig from "../app/config";
 import { OpportunityType } from "../shared/entities/opportunity.entity";
 import { CompanyRepository } from "../shared/repositories/company.respository";
 import { OpportunityRepository } from "../shared/repositories/opportunity.repository";
-import { ImportJobApplicationRequest } from "./types";
+import { ImportJobApplicationRequest, UpdateJobApplication } from "./types";
 
 export class JobApplicationService {
   private currentCycle: string = appConfig.job_application.current_cycle;
@@ -23,6 +23,18 @@ export class JobApplicationService {
     const newApplication = await this.createNewJobApplication(application);
     // Return the new job application
     return newApplication;
+  }
+
+  async update(application: UpdateJobApplication) {
+    const { job_application_id, resume, cover_letter, job_analysis } = application;
+    if (!job_application_id || (!resume && !cover_letter && !job_analysis)) {
+      throw new Error("Invalid job application request");
+    }
+    // Try to find existing job application for this period
+    const existingApplication = await this.findExistingJobApplication(application);
+
+    // If not found, create a new job application
+    const newApplication = await this.createNewJobApplication(application);
   }
 
   private findExistingJobApplication(application: ImportJobApplicationRequest) {
@@ -68,4 +80,6 @@ export class JobApplicationService {
 
     return newJobApplication;
   }
+
+  private async updateJobApplication(application: UpdateJobApplication) {}
 }

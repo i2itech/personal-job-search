@@ -1,8 +1,9 @@
-import { CreatePageParameters } from "@notionhq/client/build/src/api-endpoints";
+import { CreatePageParameters, UpdatePageParameters } from "@notionhq/client/build/src/api-endpoints";
 import { NotionClient } from "../../vendors/notion/notion.client";
 import { OpportunityEntity, OpportunityType } from "../entities/opportunity.entity";
 
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
+type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };
 export class OpportunityRepository {
   constructor(private readonly client: NotionClient = new NotionClient()) {}
 
@@ -97,8 +98,15 @@ export class OpportunityRepository {
   }
 
   async createOpportunity(opportunity: CreateOpportunityRequest) {
-    const request = this.opportunityEntityToNotionRow(opportunity);
+    const request = this.opportunityEntityToCreateNotionRow(opportunity);
     const response = await this.client.pages.create(request);
+
+    return this.notionRowToOpportunityEntity(response);
+  }
+
+  async updateOpportunity(opportunity: UpdateOpportunityRequest) {
+    const request = this.opportunityEntityToUpdateNotionRow(opportunity);
+    const response = await this.client.pages.update(request);
 
     return this.notionRowToOpportunityEntity(response);
   }
@@ -132,46 +140,65 @@ export class OpportunityRepository {
     });
   }
 
-  private opportunityEntityToNotionRow(opportunity: CreateOpportunityRequest): CreatePageParameters {
+  private opportunityEntityToCreateNotionRow(opportunity: CreateOpportunityRequest): CreatePageParameters {
     return {
       parent: {
         database_id: OpportunityEntity.DatabaseId,
       },
-      properties: {
-        Title: { title: [{ text: { content: opportunity.title } }] },
-        Type: { type: "select", select: { name: opportunity.type } },
-        ...(opportunity.cycle && { Cycle: { type: "select", select: { name: opportunity.cycle } } }),
-        ...(opportunity.company_id && {
-          Company: {
-            type: "relation",
-            relation: [{ id: opportunity.company_id }],
-          },
-        }),
-        ...(opportunity.pay_type && {
-          "Pay Type": { type: "select", select: { name: opportunity.pay_type } },
-        }),
-        ...(opportunity.posting_url && {
-          "Posting URL": { url: opportunity.posting_url },
-        }),
-        ...(opportunity.job_description && {
-          "Job Description": {
-            rich_text: opportunity.job_description.split("\n\n").map((line) => ({ text: { content: `${line}\n\n` } })),
-          },
-        }),
-        ...(opportunity.resume && {
-          Resume: { rich_text: [{ text: { content: opportunity.resume } }] },
-        }),
-        ...(opportunity.cover_letter && {
-          "Cover Letter": { rich_text: [{ text: { content: opportunity.cover_letter } }] },
-        }),
-        ...(opportunity.min_estimated_value && {
-          "Min Estimated Value": { number: opportunity.min_estimated_value },
-        }),
-        ...(opportunity.max_estimated_value && {
-          "Max Estimated Value": { number: opportunity.max_estimated_value },
-        }),
-        ...(opportunity.is_draft && { "Is Draft": { checkbox: opportunity.is_draft } }),
-      },
+      properties: this.opportunityEntityToUpdateNotionProperties(opportunity),
     };
+  }
+
+  private opportunityEntityToUpdateNotionRow(opportunity: UpdateOpportunityRequest): UpdatePageParameters {
+    return {
+      page_id: opportunity.id,
+      properties: this.opportunityEntityToUpdateNotionProperties(opportunity),
+    };
+  }
+
+  private opportunityEntityToUpdateNotionProperties(opportunity: Partial<OpportunityEntity>) {
+    return {
+      ...(opportunity.title && { Title: { title: [{ text: { content: opportunity.title } }] } }),
+      ...(opportunity.type && { Type: { select: { name: opportunity.type } } }),
+      ...(opportunity.cycle && { Cycle: { select: { name: opportunity.cycle } } }),
+      ...(opportunity.company_id && {
+        Company: {
+          relation: [{ id: opportunity.company_id }],
+        },
+      }),
+      ...(opportunity.pay_type && {
+        "Pay Type": { select: { name: opportunity.pay_type } },
+      }),
+      ...(opportunity.posting_url && {
+        "Posting URL": { url: opportunity.posting_url },
+      }),
+      ...(opportunity.job_description && {
+        "Job Description": {
+          rich_text: this.expandRichText(opportunity.job_description),
+        },
+      }),
+      ...(opportunity.resume && {
+        Resume: { rich_text: this.expandRichText(opportunity.resume) },
+      }),
+      ...(opportunity.cover_letter && {
+        "Cover Letter": { rich_text: this.expandRichText(opportunity.cover_letter) },
+      }),
+      ...(opportunity.min_estimated_value && {
+        "Min Estimated Value": { number: opportunity.min_estimated_value },
+      }),
+      ...(opportunity.max_estimated_value && {
+        "Max Estimated Value": { number: opportunity.max_estimated_value },
+      }),
+      ...(opportunity.is_draft && { "Is Draft": { checkbox: opportunity.is_draft } }),
+      ...(opportunity.job_analysis && {
+        "Job Analysis": {
+          rich_text: this.expandRichText(opportunity.job_analysis),
+        },
+      }),
+    };
+  }
+
+  private expandRichText(richText: string) {
+    return richText.split("\n").map((line) => ({ text: { content: `${line}\n` } }));
   }
 }

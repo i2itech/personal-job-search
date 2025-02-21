@@ -129,8 +129,8 @@ export class OpportunityRepository {
       tags: properties.Tags.multi_select.map((tag: any) => tag.name),
       job_description: properties["Job Description"].rich_text.map((text: any) => text.plain_text).join(""),
       job_analysis: properties["Job Analysis"].rich_text.map((text: any) => text.plain_text).join(""),
-      resume: properties.Resume.rich_text.map((text: any) => text.plain_text).join(""),
-      cover_letter: properties["Cover Letter"].rich_text.map((text: any) => text.plain_text).join(""),
+      resume: properties.Resume.files?.[0]?.external?.url,
+      cover_letter: properties["Cover Letter"].files?.[0]?.external?.url,
       min_estimated_value: properties["Min Estimated Value"].number,
       max_estimated_value: properties["Max Estimated Value"].number,
       estimated_value: properties["Estimated Value"].formula.number,
@@ -186,10 +186,10 @@ export class OpportunityRepository {
         },
       }),
       ...(opportunity.resume && {
-        Resume: { rich_text: this.expandRichText(opportunity.resume) },
+        Resume: { files: [{ external: { url: opportunity.resume }, name: "Resume" }] },
       }),
       ...(opportunity.cover_letter && {
-        "Cover Letter": { rich_text: this.expandRichText(opportunity.cover_letter) },
+        "Cover Letter": { files: [{ external: { url: opportunity.cover_letter }, name: "Cover Letter" }] },
       }),
       ...(opportunity.min_estimated_value && {
         "Min Estimated Value": { number: opportunity.min_estimated_value },

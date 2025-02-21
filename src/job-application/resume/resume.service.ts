@@ -1,10 +1,10 @@
 import appConfig from "../../app/config";
 import { OpportunityRepository } from "../../shared/repositories/opportunity.repository";
-import { formatString, StringFormat } from "../../shared/utils";
+import { formatString, removeSpecialCharacters, StringFormat } from "../../shared/utils";
 import { GoogleDriveClient } from "../../vendors/google/drive/google-drive.client";
 import { PuppeteerClient } from "../../vendors/puppeteer/puppeteer.client";
 import { GenerateResumeRequest } from "../types";
-import { generateResumeTemplate } from "./template/template";
+import { generateResumeTemplate } from "./resume-template";
 
 export class ResumeService {
   constructor(
@@ -21,11 +21,11 @@ export class ResumeService {
     const resumeTemplate = generateResumeTemplate(request);
     const resume = await PuppeteerClient.createPDF(resumeTemplate);
 
-    const title = formatString(opportunity.title, StringFormat.SNAKE_CASE);
-    const companyName = formatString(opportunity.company_name || "", StringFormat.SNAKE_CASE);
+    const title = formatString(removeSpecialCharacters(opportunity.title), StringFormat.SNAKE_CASE);
+    const companyName = formatString(removeSpecialCharacters(opportunity.company_name || ""), StringFormat.SNAKE_CASE);
     const timestamp = Date.now();
     const resumeFile = await this.googleDriveClient.uploadFile({
-      name: `resume_${title}_${companyName}_${timestamp}.pdf`,
+      name: `${title}-${companyName}-${timestamp}.pdf`,
       folderId: appConfig.job_application.google_drive.resume_folder_id,
       mimeType: "application/pdf",
       body: resume,

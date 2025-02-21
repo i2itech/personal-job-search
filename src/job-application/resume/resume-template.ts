@@ -13,12 +13,12 @@ const style = `<style>
   }
   h1 {
     margin: 0 0 8px 0;
-    color: #5BA7AE;
+    color: #2B666B;
     text-align: center;
     font-size: 28px;
   }
   h2 {
-    color: #5BA7AE;
+    color: #2B666B;
     padding: 2px 0;
     background-color: #D3D3D3;
     width: 100%;

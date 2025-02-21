@@ -13,29 +13,51 @@ export class ResumeService {
   ) {}
 
   async generateResume(request: GenerateResumeRequest) {
-    const opportunity = await this.opportunityRepository.findOneById(request.job_application_id);
+    let opportunity = await this.opportunityRepository.findOneById(request.job_application_id);
     if (!opportunity) {
       throw new Error("Opportunity not found");
     }
 
-    const resumeTemplate = generateResumeTemplate(request);
-    const resume = await PuppeteerClient.createPDF(resumeTemplate);
+    let resume: Buffer;
+    try {
+      const resumeTemplate = generateResumeTemplate(request);
+      resume = await PuppeteerClient.createPDF(resumeTemplate);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to generate resume");
+    }
 
-    const title = formatString(removeSpecialCharacters(opportunity.title), StringFormat.SNAKE_CASE);
-    const companyName = formatString(removeSpecialCharacters(opportunity.company_name || ""), StringFormat.SNAKE_CASE);
-    const timestamp = Date.now();
-    const resumeFile = await this.googleDriveClient.uploadFile({
-      name: `${title}-${companyName}-${timestamp}.pdf`,
-      folderId: appConfig.job_application.google_drive.resume_folder_id,
-      mimeType: "application/pdf",
-      body: resume,
-    });
+    let resumeFile: { id: string; name: string };
+    try {
+      const title = formatString(removeSpecialCharacters(opportunity.title), StringFormat.SNAKE_CASE);
+      const companyName = formatString(
+        removeSpecialCharacters(opportunity.company_name || ""),
+        StringFormat.SNAKE_CASE
+      );
+      const timestamp = Date.now();
+      const fileName = `${companyName}-${title}-${timestamp}.pdf`;
 
-    const resumeUrl = await this.googleDriveClient.getFileUrl(resumeFile.id || "");
-    await this.opportunityRepository.updateOpportunity({
-      id: request.job_application_id,
-      resume: resumeUrl || undefined,
-    });
+      resumeFile = await this.googleDriveClient.uploadFile({
+        name: fileName,
+        folderId: appConfig.job_application.google_drive.resume_folder_id,
+        mimeType: "application/pdf",
+        body: resume,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to upload resume");
+    }
+
+    try {
+      const resumeUrl = await this.googleDriveClient.getFileUrl(resumeFile.id);
+      await this.opportunityRepository.updateOpportunity({
+        id: request.job_application_id,
+        resume: { url: resumeUrl, name: resumeFile.name },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to update opportunity");
+    }
 
     return resume;
   }

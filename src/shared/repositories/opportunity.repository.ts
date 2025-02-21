@@ -1,6 +1,7 @@
 import { CreatePageParameters, UpdatePageParameters } from "@notionhq/client/build/src/api-endpoints";
 import { NotionClient } from "../../vendors/notion/notion.client";
 import { OpportunityEntity, OpportunityType } from "../entities/opportunity.entity";
+import { ExternalFile } from "../types";
 
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };
@@ -129,8 +130,8 @@ export class OpportunityRepository {
       tags: properties.Tags.multi_select.map((tag: any) => tag.name),
       job_description: properties["Job Description"].rich_text.map((text: any) => text.plain_text).join(""),
       job_analysis: properties["Job Analysis"].rich_text.map((text: any) => text.plain_text).join(""),
-      resume: properties.Resume.files?.[0]?.external?.url,
-      cover_letter: properties["Cover Letter"].files?.[0]?.external?.url,
+      resume: this.notionRowToExternalFile(properties.Resume.files),
+      cover_letter: this.notionRowToExternalFile(properties["Cover Letter"].files),
       min_estimated_value: properties["Min Estimated Value"].number,
       max_estimated_value: properties["Max Estimated Value"].number,
       estimated_value: properties["Estimated Value"].formula.number,
@@ -146,6 +147,20 @@ export class OpportunityRepository {
       // Note: Company and primary_contacts would need to be populated separately
       // as they are relations that require additional queries
     });
+  }
+
+  private notionRowToExternalFile(files?: { external?: { url: string }; name: string }[]): ExternalFile | undefined {
+    if (!files || files.length === 0) {
+      return undefined;
+    }
+
+    const file = files[0];
+
+    if (!file.external) {
+      return undefined;
+    }
+
+    return { url: file.external.url, name: file.name };
   }
 
   private opportunityEntityToCreateNotionRow(opportunity: CreateOpportunityRequest): CreatePageParameters {
@@ -186,10 +201,12 @@ export class OpportunityRepository {
         },
       }),
       ...(opportunity.resume && {
-        Resume: { files: [{ external: { url: opportunity.resume }, name: "Resume" }] },
+        Resume: { files: [{ external: { url: opportunity.resume.url }, name: opportunity.resume.name }] },
       }),
       ...(opportunity.cover_letter && {
-        "Cover Letter": { files: [{ external: { url: opportunity.cover_letter }, name: "Cover Letter" }] },
+        "Cover Letter": {
+          files: [{ external: { url: opportunity.cover_letter.url }, name: opportunity.cover_letter.name }],
+        },
       }),
       ...(opportunity.min_estimated_value && {
         "Min Estimated Value": { number: opportunity.min_estimated_value },

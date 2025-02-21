@@ -25,7 +25,7 @@ export class GoogleDriveClient {
     folderId: string;
     mimeType: string;
     body: string | Buffer | NodeJS.ReadableStream;
-  }) {
+  }): Promise<{ id: string; name: string }> {
     if (typeof file.body === "string") {
       file.body = Buffer.from(file.body);
     }
@@ -50,14 +50,22 @@ export class GoogleDriveClient {
         requestBody: fileMetadata,
         media: media,
       });
-      return response.data;
+
+      if (!response.data.id) {
+        throw new Error("Failed to upload file");
+      }
+
+      return { id: response.data.id, name: response.data.name || file.name };
     } catch (error: any) {
       throw new Error(`Failed to upload file: ${error.message}`);
     }
   }
 
-  async getFileUrl(fileId: string) {
+  async getFileUrl(fileId: string): Promise<string> {
     const response = await this.driveClient.files.get({ fileId, fields: "webViewLink" });
+    if (!response.data.webViewLink) {
+      throw new Error("File not found");
+    }
     return response.data.webViewLink;
   }
 }

@@ -79,3 +79,8 @@ export type GenerateResumeRequest = {
   skill_sets: ResumeSkillSet[];
   work_experience: ResumeWorkExperience[];
 };
+
+export type GenerateCoverLetterRequest = {
+  job_application_id: string;
+  cover_letter: string;
+};

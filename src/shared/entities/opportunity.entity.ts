@@ -1,3 +1,4 @@
+import { ExternalFile } from "../types";
 import { CompanyEntity } from "./company.entity";
 import { ContactEntity } from "./contact.entity";
 
@@ -12,6 +13,7 @@ export class OpportunityEntity {
   title: string;
   type: OpportunityType;
   company_id?: string;
+  company_name?: string;
   company?: CompanyEntity;
   primary_contacts?: ContactEntity[] = [];
   posting_url?: string;
@@ -20,8 +22,8 @@ export class OpportunityEntity {
   tags?: string[] = [];
   job_description?: string;
   job_analysis?: string;
-  resume?: string;
-  cover_letter?: string;
+  resume?: ExternalFile;
+  cover_letter?: ExternalFile;
   min_estimated_value?: number;
   max_estimated_value?: number;
   estimated_value?: number;

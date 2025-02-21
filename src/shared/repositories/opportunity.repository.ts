@@ -1,11 +1,17 @@
 import { CreatePageParameters, UpdatePageParameters } from "@notionhq/client/build/src/api-endpoints";
 import { NotionClient } from "../../vendors/notion/notion.client";
 import { OpportunityEntity, OpportunityType } from "../entities/opportunity.entity";
+import { ExternalFile } from "../types";
 
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };
 export class OpportunityRepository {
   constructor(private readonly client: NotionClient = new NotionClient()) {}
+
+  async findOneById(id: string) {
+    const response = await this.client.pages.retrieve({ page_id: id });
+    return this.notionRowToOpportunityEntity(response);
+  }
 
   async findOneMatchingOpportunity({
     type,
@@ -116,14 +122,16 @@ export class OpportunityRepository {
 
     return new OpportunityEntity({
       id,
+      title: properties.Title.title[0].plain_text,
       type: properties.Type.select.name as OpportunityType,
       posting_url: properties["Posting URL"].url,
       application_status: properties["Application Status"].status?.name,
       lead_status: properties["Lead Status"].status?.name,
       tags: properties.Tags.multi_select.map((tag: any) => tag.name),
       job_description: properties["Job Description"].rich_text.map((text: any) => text.plain_text).join(""),
-      resume: properties.Resume.rich_text.map((text: any) => text.plain_text).join(""),
-      cover_letter: properties["Cover Letter"].rich_text.map((text: any) => text.plain_text).join(""),
+      job_analysis: properties["Job Analysis"].rich_text.map((text: any) => text.plain_text).join(""),
+      resume: this.notionRowToExternalFile(properties.Resume.files),
+      cover_letter: this.notionRowToExternalFile(properties["Cover Letter"].files),
       min_estimated_value: properties["Min Estimated Value"].number,
       max_estimated_value: properties["Max Estimated Value"].number,
       estimated_value: properties["Estimated Value"].formula.number,
@@ -134,10 +142,25 @@ export class OpportunityRepository {
       cycle: properties.Cycle.select?.name,
       results: properties.Results.rich_text.map((text: any) => text.plain_text).join(""),
       company_id: properties.Company.relation[0]?.id,
+      company_name: properties["Company Name"].rollup.array.map((company: any) => company.title[0].plain_text).join(""),
       is_draft: properties["Is Draft"].checkbox,
       // Note: Company and primary_contacts would need to be populated separately
       // as they are relations that require additional queries
     });
+  }
+
+  private notionRowToExternalFile(files?: { external?: { url: string }; name: string }[]): ExternalFile | undefined {
+    if (!files || files.length === 0) {
+      return undefined;
+    }
+
+    const file = files[0];
+
+    if (!file.external) {
+      return undefined;
+    }
+
+    return { url: file.external.url, name: file.name };
   }
 
   private opportunityEntityToCreateNotionRow(opportunity: CreateOpportunityRequest): CreatePageParameters {
@@ -178,10 +201,12 @@ export class OpportunityRepository {
         },
       }),
       ...(opportunity.resume && {
-        Resume: { rich_text: this.expandRichText(opportunity.resume) },
+        Resume: { files: [{ external: { url: opportunity.resume.url }, name: opportunity.resume.name }] },
       }),
       ...(opportunity.cover_letter && {
-        "Cover Letter": { rich_text: this.expandRichText(opportunity.cover_letter) },
+        "Cover Letter": {
+          files: [{ external: { url: opportunity.cover_letter.url }, name: opportunity.cover_letter.name }],
+        },
       }),
       ...(opportunity.min_estimated_value && {
         "Min Estimated Value": { number: opportunity.min_estimated_value },

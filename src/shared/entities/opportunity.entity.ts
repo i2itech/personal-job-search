@@ -12,6 +12,7 @@ export class OpportunityEntity {
   title: string;
   type: OpportunityType;
   company_id?: string;
+  company_name?: string;
   company?: CompanyEntity;
   primary_contacts?: ContactEntity[] = [];
   posting_url?: string;

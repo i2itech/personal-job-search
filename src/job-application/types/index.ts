@@ -1,6 +1,10 @@
 export interface JobApplicationConfig {
   current_cycle: string;
   personal_info: JobApplicationPersonalInfo;
+  google_drive: {
+    cover_letter_folder_id: string;
+    resume_folder_id: string;
+  };
 }
 
 export interface JobApplicationPersonalInfo {

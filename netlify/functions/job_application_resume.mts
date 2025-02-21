@@ -1,6 +1,6 @@
 import { Config, Context } from "@netlify/functions";
 import { GenerateResumeRequest } from "../../src/job-application/types";
-import { ResumeService } from "../../src/job-application/resume-service";
+import { ResumeService } from "../../src/job-application/resume/resume.service";
 export const config: Config = {
   path: "/api/v1/job-application/resume",
 };

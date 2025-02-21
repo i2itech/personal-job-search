@@ -7,6 +7,11 @@ type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEn
 export class OpportunityRepository {
   constructor(private readonly client: NotionClient = new NotionClient()) {}
 
+  async findOneById(id: string) {
+    const response = await this.client.pages.retrieve({ page_id: id });
+    return this.notionRowToOpportunityEntity(response);
+  }
+
   async findOneMatchingOpportunity({
     type,
     title,
@@ -116,12 +121,14 @@ export class OpportunityRepository {
 
     return new OpportunityEntity({
       id,
+      title: properties.Title.title[0].plain_text,
       type: properties.Type.select.name as OpportunityType,
       posting_url: properties["Posting URL"].url,
       application_status: properties["Application Status"].status?.name,
       lead_status: properties["Lead Status"].status?.name,
       tags: properties.Tags.multi_select.map((tag: any) => tag.name),
       job_description: properties["Job Description"].rich_text.map((text: any) => text.plain_text).join(""),
+      job_analysis: properties["Job Analysis"].rich_text.map((text: any) => text.plain_text).join(""),
       resume: properties.Resume.rich_text.map((text: any) => text.plain_text).join(""),
       cover_letter: properties["Cover Letter"].rich_text.map((text: any) => text.plain_text).join(""),
       min_estimated_value: properties["Min Estimated Value"].number,
@@ -134,6 +141,7 @@ export class OpportunityRepository {
       cycle: properties.Cycle.select?.name,
       results: properties.Results.rich_text.map((text: any) => text.plain_text).join(""),
       company_id: properties.Company.relation[0]?.id,
+      company_name: properties["Company Name"].rollup.array.map((company: any) => company.title[0].plain_text).join(""),
       is_draft: properties["Is Draft"].checkbox,
       // Note: Company and primary_contacts would need to be populated separately
       // as they are relations that require additional queries

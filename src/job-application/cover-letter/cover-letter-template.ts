@@ -6,7 +6,7 @@ const style = `<style>
     }
   body {
     font-family: 'Calibri', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     color: #000000;
     max-width: 800px;
     line-height: 1.25;
@@ -14,11 +14,18 @@ const style = `<style>
 </style>`;
 
 export const generateCoverLetterTemplate = (request: GenerateCoverLetterRequest) => {
+  const lines = request.cover_letter.split("\n\n");
   return `
 ${style}
 <div>
-  <pre>
-  ${request.cover_letter}
-  </pre>
+${lines
+  .map(
+    (line) =>
+      `<p>${line
+        .split("\n")
+        .map((l) => `<span>${l}</span>`)
+        .join("\n<br />\n")}</p>`
+  )
+  .join("\n")}
 </div>`;
 };

@@ -29,6 +29,7 @@ const generateOpenApi = () => {
   // Define API paths
   registry.registerPath({
     method: "post",
+    operationId: "importJobApplication",
     path: "/api/v1/job-application",
     description: "Import a new job application",
     request: {
@@ -64,6 +65,7 @@ const generateOpenApi = () => {
 
   registry.registerPath({
     method: "post",
+    operationId: "generateResume",
     path: "/api/v1/job-application/resume",
     description: "Generate a resume for a job application",
     request: {
@@ -99,6 +101,7 @@ const generateOpenApi = () => {
 
   registry.registerPath({
     method: "post",
+    operationId: "generateCoverLetter",
     path: "/api/v1/job-application/cover-letter",
     description: "Generate a cover letter for a job application",
     request: {

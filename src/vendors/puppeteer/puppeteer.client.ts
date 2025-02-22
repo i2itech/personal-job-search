@@ -9,6 +9,7 @@ export class PuppeteerClient {
     const browser = await puppeteer.launch({
       executablePath,
       headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     try {

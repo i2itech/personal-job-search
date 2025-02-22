@@ -3,6 +3,11 @@ import { GoogleDriveConfig } from "../vendors/google/drive/google-drive.type";
 import { NotionConfig } from "../vendors/notion/notion.types";
 
 export interface AppConfig {
+  server_base_url: string;
+}
+
+export interface Config {
+  app: AppConfig;
   job_application: JobApplicationConfig;
   notion: NotionConfig;
   google: {
@@ -13,6 +18,9 @@ export interface AppConfig {
 const personalInfo = JSON.parse(process.env.PERSONAL_INFO || "{}") as JobApplicationPersonalInfo;
 const googleDriveCredentials = JSON.parse(process.env.GOOGLE_DRIVE_API_CREDENTIALS || "{}");
 export default {
+  app: {
+    server_base_url: process.env.BASE_URL || "",
+  },
   job_application: {
     current_cycle: "2025 - Q1",
     personal_info: personalInfo,
@@ -29,4 +37,4 @@ export default {
       credentials: googleDriveCredentials,
     },
   },
-} as AppConfig;
+} as Config;

@@ -9,6 +9,7 @@ import {
   ImportJobApplicationRequestSchema,
   ImportJobApplicationResponseSchema,
 } from "../../src/job-application/types";
+import appConfig from "../../src/app/config";
 
 extendZodWithOpenApi(z);
 
@@ -138,6 +139,11 @@ const generateOpenApi = () => {
       title: "Job Application API",
       version: "1.0.0",
     },
+    servers: [
+      {
+        url: appConfig.app.server_base_url,
+      },
+    ],
   });
 };
 

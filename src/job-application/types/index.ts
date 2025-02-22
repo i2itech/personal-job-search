@@ -27,16 +27,18 @@ export type JobApplicationEducation = {
 };
 
 export const ImportJobApplicationRequestSchema = z.object({
-  company_name: z.string().describe("The name of the company"),
-  company_website_url: z.string().optional().describe("The website URL of the company"),
-  company_linkedin_url: z.string().optional().describe("The LinkedIn URL of the company"),
-  job_title: z.string().describe("The title of the job"),
-  job_description: z.string().describe("The description of the job"),
-  job_analysis: z.string().describe("The analysis of the job"),
-  job_posting_url: z.string().describe("The URL of the job posting"),
+  company_name: z.string().describe("The name of the company offering the job"),
+  company_website_url: z.string().optional().describe("The official website URL of the company"),
+  company_linkedin_url: z.string().optional().describe("The LinkedIn profile URL of the company"),
+  job_title: z.string().describe("The title or designation of the job position"),
+  job_description: z.string().describe("A detailed description of the job responsibilities and requirements"),
+  job_analysis: z
+    .string()
+    .describe("An analysis or summary of the job in markdown format, including fit scores or relevance assessments"),
+  job_posting_url: z.string().describe("The URL where the job posting is publicly available"),
   pay_type: z
     .enum(["Hourly", "Salary"])
-    .describe("The type of pay for the job hourly for contract or salary for full-time"),
+    .describe("Compensation structure - 'Hourly' for contract roles, 'Salary' for full-time positions"),
 });
 
 export type ImportJobApplicationRequest = z.infer<typeof ImportJobApplicationRequestSchema>;
@@ -57,37 +59,41 @@ export enum ResumeSkillSetType {
 }
 
 export const ResumeSkillSetSchema = z.object({
-  type: z.nativeEnum(ResumeSkillSetType),
-  skills: z.array(z.string()),
-  order: z.number(),
+  type: z.nativeEnum(ResumeSkillSetType).describe("Category classification for the skill set"),
+  skills: z.array(z.string()).describe("List of specific skills, technologies, or competencies in this category"),
+  order: z.number().describe("Display priority for this skill category (lower numbers appear first)"),
 });
 
 export type ResumeSkillSet = z.infer<typeof ResumeSkillSetSchema>;
 
 export const ResumeWorkExperienceSchema = z.object({
-  company: z.string().describe("The company name"),
-  role: z.string().describe("The role of the job"),
-  location: z.string().describe("The location of the job"),
-  start_date: z.string().describe("The start month and year of the job (ex December 2024)"),
-  end_date: z.string().describe("The end month and year of the job (ex December 2024)"),
-  key_technologies: z.array(z.string()).describe("The key technologies used in the job"),
-  experiences: z.array(z.string()).describe("A list of experiences in the job"),
-  order: z.number().describe("The order of the job in the list"),
+  company: z.string().describe("Name of the employer or organization"),
+  role: z.string().describe("Job title or position held"),
+  location: z.string().describe("Geographic location of the job (city, country)"),
+  start_date: z.string().describe("Employment start date in 'Month Year' format (e.g., 'December 2024')"),
+  end_date: z.string().describe("Employment end date in 'Month Year' format, or 'Present' if current position"),
+  key_technologies: z.array(z.string()).describe("Primary technologies, tools, and frameworks used in the role"),
+  experiences: z.array(z.string()).describe("Key achievements, responsibilities, and notable projects"),
+  order: z.number().describe("Display order in resume (lower numbers appear first)"),
 });
 export type ResumeWorkExperience = z.infer<typeof ResumeWorkExperienceSchema>;
 
 export const GenerateResumeRequestSchema = z.object({
-  job_application_id: z.string().describe("The ID of the job application"),
-  summary: z.string().describe("A professional summary of the applicant"),
-  skill_sets: z.array(ResumeSkillSetSchema).describe("A list of skill sets"),
-  work_experience: z.array(ResumeWorkExperienceSchema).describe("A list of work experiences"),
+  job_application_id: z.string().describe("Unique identifier of the job application to generate resume for"),
+  summary: z.string().describe("Professional summary highlighting key qualifications and career objectives"),
+  skill_sets: z
+    .array(ResumeSkillSetSchema)
+    .describe("Categorized list of professional skills and competencies, ordered by relevance"),
+  work_experience: z
+    .array(ResumeWorkExperienceSchema)
+    .describe("Chronological work history showcasing professional experience and achievements"),
 });
 
 export type GenerateResumeRequest = z.infer<typeof GenerateResumeRequestSchema>;
 
 export const GenerateCoverLetterRequestSchema = z.object({
-  job_application_id: z.string().describe("The ID of the job application"),
-  cover_letter: z.string().describe("The cover letter of the applicant"),
+  job_application_id: z.string().describe("Unique identifier of the job application to generate cover letter for"),
+  cover_letter: z.string().describe("The content of the cover letter, tailored to the job application"),
 });
 
 export type GenerateCoverLetterRequest = z.infer<typeof GenerateCoverLetterRequestSchema>;

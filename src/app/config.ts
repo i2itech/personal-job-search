@@ -1,6 +1,7 @@
 import { JobApplicationConfig, JobApplicationPersonalInfo } from "../job-application/types";
 import { GoogleDriveConfig } from "../vendors/google/drive/google-drive.type";
 import { NotionConfig } from "../vendors/notion/notion.types";
+import { PuppeteerConfig } from "../vendors/puppeteer/puppeteer.types";
 
 export interface AppConfig {
   server_base_url: string;
@@ -13,6 +14,7 @@ export interface Config {
   google: {
     drive: GoogleDriveConfig;
   };
+  puppeteer: PuppeteerConfig;
 }
 
 const personalInfo = JSON.parse(process.env.PERSONAL_INFO || "{}") as JobApplicationPersonalInfo;
@@ -36,5 +38,8 @@ export default {
     drive: {
       credentials: googleDriveCredentials,
     },
+  },
+  puppeteer: {
+    chrome_path: process.env.CHROME_PATH || "",
   },
 } as Config;

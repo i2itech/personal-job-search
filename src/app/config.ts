@@ -40,6 +40,6 @@ export default {
     },
   },
   puppeteer: {
-    chrome_path: process.env.CHROME_PATH || "",
+    chrome_path: process.env.CHROME_PATH,
   },
 } as Config;

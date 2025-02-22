@@ -27,13 +27,11 @@
       "name": "Netlify Functions Debugging",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/node_modules/.bin/netlify",
-      "args": ["dev"],
-      "runtimeArgs": ["run-script", "debug"],
+      "args": ["run", "dev"],
       "runtimeExecutable": "npm",
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "outFiles": ["${workspaceFolder}/.netlify/functions-serve/**/*.*js"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }

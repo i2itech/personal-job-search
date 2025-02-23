@@ -82,10 +82,7 @@ const generateOpenApi = () => {
         description: "Job application imported successfully",
         content: {
           "application/pdf": {
-            schema: z.object({
-              type: z.string(),
-              format: z.literal("binary"),
-            }),
+            schema: z.string(),
           },
         },
       },

@@ -25,7 +25,7 @@ const importJobApplication = async (body: ImportJobApplicationRequest) => {
     return new Response(
       JSON.stringify({
         message: "Application submitted successfully",
-        jobApplication,
+        job_application: jobApplication,
       }),
       {
         status: 200,

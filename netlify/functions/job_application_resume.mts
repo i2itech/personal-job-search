@@ -19,14 +19,20 @@ export default async (req: Request, context: Context) => {
 const generateResume = async (body: GenerateResumeRequest) => {
   try {
     const resumeService = new ResumeService();
-    const resume = await resumeService.generateResume(body);
+    const jobApplication = await resumeService.generateResume(body);
 
-    return new Response(resume, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-      },
-    });
+    return new Response(
+      JSON.stringify({
+        message: "Resume generated successfully and job application updated",
+        job_application: jobApplication,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error processing job application:", error);
     return new Response(

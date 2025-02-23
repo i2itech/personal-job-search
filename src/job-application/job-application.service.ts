@@ -61,8 +61,11 @@ export class JobApplicationService {
       title: application.job_title,
       company_id: company.id,
       job_description: application.job_description,
+      job_analysis: application.job_analysis,
       posting_url: application.job_posting_url,
       pay_type: application.pay_type,
+      min_estimated_value: application.min_estimated_value,
+      max_estimated_value: application.max_estimated_value,
       is_draft: true,
     });
 

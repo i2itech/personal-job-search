@@ -50,15 +50,15 @@ export class ResumeService {
 
     try {
       const resumeUrl = await this.googleDriveClient.getFileUrl(resumeFile.id);
-      await this.opportunityRepository.updateOpportunity({
+      opportunity = await this.opportunityRepository.updateOpportunity({
         id: request.job_application_id,
         resume: { url: resumeUrl, name: resumeFile.name },
       });
+
+      return opportunity;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to update opportunity");
     }
-
-    return resume;
   }
 }

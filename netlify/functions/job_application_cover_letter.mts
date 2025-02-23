@@ -19,14 +19,20 @@ export default async (req: Request, context: Context) => {
 const generateCoverLetter = async (body: GenerateCoverLetterRequest) => {
   try {
     const coverLetterService = new CoverLetterService();
-    const coverLetter = await coverLetterService.generate(body);
+    const jobApplication = await coverLetterService.generate(body);
 
-    return new Response(coverLetter, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/pdf",
-      },
-    });
+    return new Response(
+      JSON.stringify({
+        message: "Cover letter generated successfully and job application updated",
+        job_application: jobApplication,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error processing job application:", error);
     return new Response(

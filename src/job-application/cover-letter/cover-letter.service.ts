@@ -50,15 +50,15 @@ export class CoverLetterService {
 
     try {
       const coverLetterUrl = await this.googleDriveClient.getFileUrl(coverLetterFile.id);
-      await this.opportunityRepository.updateOpportunity({
+      opportunity = await this.opportunityRepository.updateOpportunity({
         id: request.job_application_id,
         cover_letter: { url: coverLetterUrl, name: coverLetterFile.name },
       });
+
+      return opportunity;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to update opportunity");
     }
-
-    return coverLetter;
   }
 }

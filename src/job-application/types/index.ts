@@ -34,11 +34,15 @@ export const ImportJobApplicationRequestSchema = z.object({
   job_description: z.string().describe("A detailed description of the job responsibilities and requirements"),
   job_analysis: z
     .string()
-    .describe("An analysis or summary of the job in markdown format, including fit scores or relevance assessments"),
+    .describe(
+      "AI generated analysis of the job opportunity in markdown format, including fit scores or relevance assessments"
+    ),
   job_posting_url: z.string().describe("The URL where the job posting is publicly available"),
   pay_type: z
     .enum(["Hourly", "Salary"])
     .describe("Compensation structure - 'Hourly' for contract roles, 'Salary' for full-time positions"),
+  min_estimated_value: z.number().optional().describe("The minimum estimated value in USD and either hourly or yearly"),
+  max_estimated_value: z.number().optional().describe("The maximum estimated value in USD and either hourly or yearly"),
 });
 
 export type ImportJobApplicationRequest = z.infer<typeof ImportJobApplicationRequestSchema>;
@@ -98,41 +102,53 @@ export const GenerateCoverLetterRequestSchema = z.object({
 
 export type GenerateCoverLetterRequest = z.infer<typeof GenerateCoverLetterRequestSchema>;
 
+export const JobApplicationSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  type: z.nativeEnum(OpportunityType),
+  company_id: z.string().optional(),
+  company_name: z.string().optional(),
+  posting_url: z.string().optional(),
+  application_status: z.string().optional(),
+  lead_status: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  job_description: z.string().optional(),
+  job_analysis: z.string().optional(),
+  resume: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      url: z.string().describe("The Google Drive URL of the resume file"),
+    })
+    .optional(),
+  cover_letter: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      url: z.string().describe("The Google Drive URL of the cover letter file"),
+    })
+    .optional(),
+  min_estimated_value: z.number().optional(),
+  max_estimated_value: z.number().optional(),
+  estimated_value: z.number().optional(),
+  date_applied: z.string().optional(),
+  pay_type: z.string().optional(),
+  cycle: z.string().optional(),
+  results: z.string().optional(),
+  is_draft: z.boolean().optional(),
+});
+
 export const ImportJobApplicationResponseSchema = z.object({
   message: z.string(),
-  job_application: z.object({
-    id: z.string(),
-    title: z.string(),
-    type: z.nativeEnum(OpportunityType),
-    company_id: z.string().optional(),
-    company_name: z.string().optional(),
-    posting_url: z.string().optional(),
-    application_status: z.string().optional(),
-    lead_status: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    job_description: z.string().optional(),
-    job_analysis: z.string().optional(),
-    resume: z
-      .object({
-        id: z.string(),
-        name: z.string(),
-        url: z.string(),
-      })
-      .optional(),
-    cover_letter: z
-      .object({
-        id: z.string(),
-        name: z.string(),
-        url: z.string(),
-      })
-      .optional(),
-    min_estimated_value: z.number().optional(),
-    max_estimated_value: z.number().optional(),
-    estimated_value: z.number().optional(),
-    date_applied: z.string().optional(),
-    pay_type: z.string().optional(),
-    cycle: z.string().optional(),
-    results: z.string().optional(),
-    is_draft: z.boolean().optional(),
-  }),
+  job_application: JobApplicationSchema,
+});
+
+export const GenerateResumeResponseSchema = z.object({
+  message: z.string(),
+  job_application: JobApplicationSchema,
+});
+
+export const GenerateCoverLetterResponseSchema = z.object({
+  message: z.string(),
+  job_application: JobApplicationSchema,
 });

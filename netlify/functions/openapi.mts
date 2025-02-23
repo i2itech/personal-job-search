@@ -4,7 +4,9 @@ import { z } from "zod";
 import { JobApplicationService } from "../../src/job-application/job-application.service";
 import {
   GenerateCoverLetterRequestSchema,
+  GenerateCoverLetterResponseSchema,
   GenerateResumeRequestSchema,
+  GenerateResumeResponseSchema,
   ImportJobApplicationRequest,
   ImportJobApplicationRequestSchema,
   ImportJobApplicationResponseSchema,
@@ -21,11 +23,6 @@ const generateOpenApi = () => {
   // Create registry instance
   const registry = new OpenAPIRegistry();
 
-  // Register your schemas
-  registry.register("ImportJobApplicationRequest", ImportJobApplicationRequestSchema);
-  registry.register("GenerateResumeRequest", GenerateResumeRequestSchema);
-  registry.register("GenerateCoverLetterRequest", GenerateCoverLetterRequestSchema);
-  registry.register("ImportJobApplicationResponse", ImportJobApplicationResponseSchema);
   // Define API paths
   registry.registerPath({
     method: "post",
@@ -81,8 +78,8 @@ const generateOpenApi = () => {
       200: {
         description: "Job application imported successfully",
         content: {
-          "application/pdf": {
-            schema: z.string(),
+          "application/json": {
+            schema: { $ref: "/components/schemas/GenerateResumeResponse" },
           },
         },
       },
@@ -117,8 +114,8 @@ const generateOpenApi = () => {
       200: {
         description: "Job application imported successfully",
         content: {
-          "application/pdf": {
-            schema: z.string(),
+          "application/json": {
+            schema: { $ref: "/components/schemas/GenerateCoverLetterResponse" },
           },
         },
       },
@@ -134,6 +131,14 @@ const generateOpenApi = () => {
       },
     },
   });
+
+  // Register your schemas
+  registry.register("ImportJobApplicationRequest", ImportJobApplicationRequestSchema);
+  registry.register("GenerateResumeRequest", GenerateResumeRequestSchema);
+  registry.register("GenerateCoverLetterRequest", GenerateCoverLetterRequestSchema);
+  registry.register("ImportJobApplicationResponse", ImportJobApplicationResponseSchema);
+  registry.register("GenerateResumeResponse", GenerateResumeResponseSchema);
+  registry.register("GenerateCoverLetterResponse", GenerateCoverLetterResponseSchema);
 
   const generator = new OpenApiGeneratorV3(registry.definitions);
   return generator.generateDocument({

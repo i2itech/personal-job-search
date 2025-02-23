@@ -84,7 +84,7 @@ const generateOpenApi = () => {
           "application/pdf": {
             schema: z.object({
               type: z.string(),
-              format: z.string().base64(),
+              format: z.literal("binary"),
             }),
           },
         },

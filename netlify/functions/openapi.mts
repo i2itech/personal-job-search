@@ -11,6 +11,8 @@ import {
   CreateJobApplicationRequestSchema,
   CreateJobApplicationResponseSchema,
   GetJobApplicationResponseSchema,
+  UpsertResumeDetailsRequestSchema,
+  UpsertResumeDetailsResponseSchema,
 } from "../../src/job-application/types";
 import appConfig from "../../src/app/config";
 
@@ -63,9 +65,45 @@ const generateOpenApi = () => {
 
   registry.registerPath({
     method: "post",
-    operationId: "generateResume",
+    operationId: "upsertResumeDetails",
     path: "/api/v1/job-application/resume",
-    description: "Generate a resume for a job application",
+    description: "Upsert the resume details for a job application",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/UpsertResumeDetailsRequest" },
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "Job application imported successfully",
+        content: {
+          "application/json": {
+            schema: { $ref: "#/components/schemas/UpsertResumeDetailsResponse" },
+          },
+        },
+      },
+      500: {
+        description: "Server error",
+        content: {
+          "application/json": {
+            schema: z.object({
+              error: z.string(),
+            }),
+          },
+        },
+      },
+    },
+  });
+
+  registry.registerPath({
+    method: "post",
+    operationId: "generateResume",
+    path: "/api/v1/job-application/resume/generate",
+    description: "Generate the resume for a job application",
     request: {
       body: {
         content: {
@@ -175,6 +213,8 @@ const generateOpenApi = () => {
   registry.register("GenerateResumeResponse", GenerateResumeResponseSchema);
   registry.register("GenerateCoverLetterResponse", GenerateCoverLetterResponseSchema);
   registry.register("GetJobApplicationResponse", GetJobApplicationResponseSchema);
+  registry.register("UpsertResumeDetailsRequest", UpsertResumeDetailsRequestSchema);
+  registry.register("UpsertResumeDetailsResponse", UpsertResumeDetailsResponseSchema);
 
   const generator = new OpenApiGeneratorV3(registry.definitions);
   return generator.generateDocument({

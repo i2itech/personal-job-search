@@ -1,8 +1,8 @@
 import { Config, Context } from "@netlify/functions";
-import { GenerateResumeRequest } from "../../src/job-application/types";
-import { ResumeService } from "../../src/job-application/resume/resume.service";
+import { ResumeService } from "../../../../src/job-application/resume/resume.service";
+import { GenerateResumeRequest } from "../../../../src/job-application/types";
 export const config: Config = {
-  path: "/api/v1/job-application/resume",
+  path: "/api/v1/job-application/resume/generate",
 };
 
 export default async (req: Request, context: Context) => {

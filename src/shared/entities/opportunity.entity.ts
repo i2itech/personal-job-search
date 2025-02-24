@@ -1,8 +1,9 @@
-import { ExternalFile } from "../types";
+import { ExternalFile, Opportunity } from "../types";
+import { OpportunityType } from "../types/opportunity.types";
 import { CompanyEntity } from "./company.entity";
 import { ContactEntity } from "./contact.entity";
 
-export class OpportunityEntity {
+export class OpportunityEntity implements Opportunity {
   static DatabaseId: string = "f7dc427eca374fa3b91279e01cbed5eb";
 
   constructor(partial: Partial<OpportunityEntity> = {}) {
@@ -32,9 +33,4 @@ export class OpportunityEntity {
   cycle?: string;
   results?: string;
   is_draft?: boolean;
-}
-
-export enum OpportunityType {
-  JOB_APPLICATION = "Job Application",
-  SALES_LEAD = "Sales Lead",
 }

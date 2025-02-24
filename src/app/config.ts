@@ -15,6 +15,9 @@ export interface Config {
     drive: GoogleDriveConfig;
   };
   puppeteer: PuppeteerConfig;
+  mongodb: {
+    url: string;
+  };
 }
 
 const personalInfo = JSON.parse(process.env.PERSONAL_INFO || "{}") as JobApplicationPersonalInfo;
@@ -41,5 +44,8 @@ export default {
   },
   puppeteer: {
     chrome_path: process.env.CHROME_PATH,
+  },
+  mongodb: {
+    url: process.env.MONGODB_URL || "",
   },
 } as Config;

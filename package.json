@@ -52,6 +52,7 @@
     "@notionhq/client": "^2.2.15",
     "@sparticuz/chromium": "^132.0.0",
     "@typegoose/typegoose": "^12.11.0",
+    "class-transformer": "^0.5.1",
     "dotenv": "^16.4.7",
     "google-auth-library": "^9.15.1",
     "googleapis": "^144.0.0",

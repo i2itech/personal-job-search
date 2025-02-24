@@ -203,36 +203,3 @@ export default async (req: Request, context: Context) => {
       return new Response("Method not allowed", { status: 405 });
   }
 };
-
-const importJobApplication = async (body: CreateJobApplicationRequest) => {
-  try {
-    const jobApplicationService = new JobApplicationService();
-    const jobApplication = await jobApplicationService.import(body);
-
-    return new Response(
-      JSON.stringify({
-        message: "Application submitted successfully",
-        jobApplication,
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Error processing job application:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Failed to process application",
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
-};

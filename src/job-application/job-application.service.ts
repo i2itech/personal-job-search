@@ -13,7 +13,12 @@ export class JobApplicationService {
   ) {}
 
   async findById(id: string) {
-    return await this.opportunityRepository.findOneById(id);
+    try {
+      return await this.opportunityRepository.findOneById(id);
+    } catch (error) {
+      console.error("Error finding job application:", error);
+      throw new Error("Failed to find job application");
+    }
   }
 
   async import(application: CreateJobApplicationRequest) {

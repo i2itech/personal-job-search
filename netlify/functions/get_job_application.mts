@@ -10,6 +10,7 @@ export default async (req: Request, context: Context) => {
   switch (req.method) {
     case "GET": {
       const id = context.params.id;
+      console.log("Getting job application for id: ", id);
       return await getJobApplication(id);
     }
     default:
@@ -29,10 +30,10 @@ const getJobApplication = async (id: string) => {
       },
     });
   } catch (error) {
-    console.error("Error processing job application:", error);
+    console.error("Error finding job application:", error);
     return new Response(
       JSON.stringify({
-        error: "Failed to process application",
+        error: "Failed to find job application",
       }),
       {
         status: 500,

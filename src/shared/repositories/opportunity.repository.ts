@@ -10,6 +10,11 @@ export class OpportunityRepository {
 
   async findOneById(id: string) {
     const response = await this.client.pages.retrieve({ page_id: id });
+
+    if (!response) {
+      throw new Error("Failed to find job application");
+    }
+
     return this.notionRowToOpportunityEntity(response);
   }
 

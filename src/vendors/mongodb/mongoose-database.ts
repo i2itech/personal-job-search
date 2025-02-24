@@ -59,7 +59,8 @@ export class MongooseDatabase<TEntity> {
   }
 
   async findOne(query: mongoose.FilterQuery<TEntity>): Promise<TEntity | null> {
-    return useDB(() => this.model.findOne(query));
+    const document = await useDB(() => this.model.findOne(query));
+    return document ? (document.toObject() as TEntity) : null;
   }
 
   async create(entity: TEntity): Promise<TEntity> {

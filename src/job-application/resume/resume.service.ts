@@ -3,18 +3,31 @@ import { OpportunityRepository } from "../../shared/repositories/opportunity.rep
 import { formatString, removeSpecialCharacters, StringFormat } from "../../shared/utils";
 import { GoogleDriveClient } from "../../vendors/google/drive/google-drive.client";
 import { PuppeteerClient } from "../../vendors/puppeteer/puppeteer.client";
-import { GenerateResumeRequest } from "../types";
+import { GenerateResumeRequest, UpsertResumeDetailsRequest } from "../types";
 import { generateResumeTemplate } from "./resume-template";
-
+import { ResumeDetailsRepository } from "../../shared/repositories/resume-details.repository";
 export class ResumeService {
   constructor(
     private readonly opportunityRepository: OpportunityRepository = new OpportunityRepository(),
-    private googleDriveClient: GoogleDriveClient = new GoogleDriveClient()
+    private googleDriveClient: GoogleDriveClient = new GoogleDriveClient(),
+    private resumeDetailsRepository: ResumeDetailsRepository = new ResumeDetailsRepository()
   ) {}
 
   async generateResume(request: GenerateResumeRequest) {
+    let resumeDetails = await this.resumeDetailsRepository.findOneByJobApplication(request.job_application_id);
+    if (
+      !resumeDetails ||
+      !resumeDetails.summary ||
+      resumeDetails.skill_sets.length === 0 ||
+      resumeDetails.work_experience.length === 0
+    ) {
+      console.error("Resume details not found");
+      throw new Error("Resume details not found");
+    }
+
     let opportunity = await this.opportunityRepository.findOneById(request.job_application_id);
     if (!opportunity) {
+      console.error("Opportunity not found");
       throw new Error("Opportunity not found");
     }
 
@@ -60,5 +73,15 @@ export class ResumeService {
       console.error(error);
       throw new Error("Failed to update opportunity");
     }
+  }
+
+  async upsertResumeDetails(request: UpsertResumeDetailsRequest) {
+    const opportunity = await this.opportunityRepository.findOneById(request.job_application_id);
+    if (!opportunity) {
+      throw new Error("Opportunity not found");
+    }
+
+    const resumeDetails = await this.resumeDetailsRepository.upsert(request);
+    return resumeDetails;
   }
 }

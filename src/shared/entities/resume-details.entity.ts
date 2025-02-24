@@ -8,11 +8,11 @@ export class ResumeDetailsEntity implements ResumeDetails {
     Object.assign(this, partial);
   }
 
-  @prop({ required: true, unique: true })
+  @prop({ required: true, _id: true })
   job_application_id: string;
 
-  @prop({ required: true })
-  summary: string;
+  @prop({ required: false })
+  summary?: string;
 
   @prop({ type: () => [Object], default: [] })
   skill_sets: ResumeSkillSet[];

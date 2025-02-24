@@ -1,30 +1,29 @@
 import { Config, Context } from "@netlify/functions";
-import { JobApplicationService } from "../../src/job-application/job-application.service";
-import { CreateJobApplicationRequest } from "../../src/job-application/types";
-
+import { GenerateCoverLetterRequest } from "../../../../../src/job-application/types";
+import { CoverLetterService } from "../../../../../src/job-application/cover-letter/cover-letter.service";
 export const config: Config = {
-  path: "/api/v1/job-application",
+  path: "/api/v1/job-application/cover-letter",
 };
 
 export default async (req: Request, context: Context) => {
   switch (req.method) {
     case "POST": {
       const body = await req.json();
-      return await createJobApplication(body);
+      return await generateCoverLetter(body);
     }
     default:
       return new Response("Method not allowed", { status: 405 });
   }
 };
 
-const createJobApplication = async (body: CreateJobApplicationRequest) => {
+const generateCoverLetter = async (body: GenerateCoverLetterRequest) => {
   try {
-    const jobApplicationService = new JobApplicationService();
-    const jobApplication = await jobApplicationService.create(body);
+    const coverLetterService = new CoverLetterService();
+    const jobApplication = await coverLetterService.generate(body);
 
     return new Response(
       JSON.stringify({
-        message: "Application submitted successfully",
+        message: "Cover letter generated successfully and job application updated",
         job_application: jobApplication,
       }),
       {

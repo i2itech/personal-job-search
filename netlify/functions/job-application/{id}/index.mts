@@ -1,6 +1,6 @@
 import { Config, Context } from "@netlify/functions";
-import { JobApplicationService } from "../../src/job-application/job-application.service";
-import { CreateJobApplicationRequest } from "../../src/job-application/types";
+import { JobApplicationService } from "../../../../src/job-application/job-application.service";
+import { CreateJobApplicationRequest } from "../../../../src/job-application/types";
 
 export const config: Config = {
   path: "/api/v1/job-application/:id",

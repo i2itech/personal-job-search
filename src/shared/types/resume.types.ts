@@ -36,7 +36,7 @@ export type ResumeWorkExperience = z.infer<typeof ResumeWorkExperienceSchema>;
 
 export const ResumeDetailsSchema = z.object({
   job_application_id: z.string().describe("Unique identifier of the job application to generate resume for"),
-  summary: z.string().describe("Professional summary highlighting key qualifications and career objectives"),
+  summary: z.string().optional().describe("Professional summary highlighting key qualifications and career objectives"),
   skill_sets: z
     .array(ResumeSkillSetSchema)
     .describe("Categorized list of professional skills and competencies, ordered by relevance"),

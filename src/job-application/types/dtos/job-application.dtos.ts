@@ -37,8 +37,16 @@ export const UpdateJobApplicationResponseSchema = z.object({
   job_application: OpportunitySchema,
 });
 
+export const UpsertResumeDetailsRequestSchema = ResumeDetailsSchema.partial().required({
+  job_application_id: true,
+});
+
+export type UpsertResumeDetailsRequest = z.infer<typeof UpsertResumeDetailsRequestSchema>;
+
 // Generate Resume
-export const GenerateResumeRequestSchema = ResumeDetailsSchema;
+export const GenerateResumeRequestSchema = z.object({
+  job_application_id: z.string().describe("Unique identifier of the job application to generate resume for"),
+});
 
 export type GenerateResumeRequest = z.infer<typeof GenerateResumeRequestSchema>;
 
@@ -48,7 +56,6 @@ export const GenerateResumeResponseSchema = z.object({
 });
 // Generate Cover Letter
 export const GenerateCoverLetterRequestSchema = z.object({
-  job_application_id: z.string().describe("Unique identifier of the job application to generate cover letter for"),
   cover_letter: z.string().describe("The content of the cover letter, tailored to the job application"),
 });
 

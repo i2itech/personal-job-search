@@ -37,11 +37,30 @@ export const UpdateJobApplicationResponseSchema = z.object({
   job_application: OpportunitySchema,
 });
 
-export const UpsertResumeDetailsRequestSchema = ResumeDetailsSchema.partial().required({
-  job_application_id: true,
-});
+export const UpsertResumeDetailsRequestSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("summary"),
+    job_application_id: z.string(),
+    summary: z.string(),
+  }),
+  z.object({
+    type: z.literal("skill_sets"),
+    job_application_id: z.string(),
+    skill_sets: ResumeDetailsSchema.shape.skill_sets,
+  }),
+  z.object({
+    type: z.literal("work_experience"),
+    job_application_id: z.string(),
+    work_experience: ResumeDetailsSchema.shape.work_experience,
+  }),
+]);
 
 export type UpsertResumeDetailsRequest = z.infer<typeof UpsertResumeDetailsRequestSchema>;
+
+export const UpsertResumeDetailsResponseSchema = z.object({
+  message: z.string(),
+  resume_details: ResumeDetailsSchema,
+});
 
 // Generate Resume
 export const GenerateResumeRequestSchema = z.object({

@@ -1,6 +1,7 @@
 import { Config, Context } from "@netlify/functions";
-import { GenerateCoverLetterRequest } from "../../../../../src/job-application/types";
-import { CoverLetterService } from "../../../../../src/job-application/cover-letter/cover-letter.service";
+import { GenerateCoverLetterRequest } from "../../../../src/job-application/types";
+import { CoverLetterService } from "../../../../src/job-application/cover-letter/cover-letter.service";
+
 export const config: Config = {
   path: "/api/v1/job-application/cover-letter",
 };

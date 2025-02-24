@@ -80,7 +80,7 @@ const generateOpenApi = () => {
         description: "Job application imported successfully",
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/GenerateResumeResponse" },
+            schema: { $ref: "#/components/schemas/GenerateResumeResponse" },
           },
         },
       },
@@ -106,7 +106,7 @@ const generateOpenApi = () => {
       body: {
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/GenerateCoverLetterRequest" },
+            schema: { $ref: "#/components/schemas/GenerateCoverLetterRequest" },
           },
         },
       },
@@ -116,7 +116,7 @@ const generateOpenApi = () => {
         description: "Cover letter generated successfully",
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/GenerateCoverLetterResponse" },
+            schema: { $ref: "#/components/schemas/GenerateCoverLetterResponse" },
           },
         },
       },
@@ -148,7 +148,7 @@ const generateOpenApi = () => {
         description: "Job application imported successfully",
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/GetJobApplicationResponse" },
+            schema: { $ref: "#/components/schemas/GetJobApplicationResponse" },
           },
         },
       },

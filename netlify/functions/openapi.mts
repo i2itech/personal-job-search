@@ -34,7 +34,7 @@ const generateOpenApi = () => {
       body: {
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/CreateJobApplicationRequest" },
+            schema: { $ref: "#/components/schemas/CreateJobApplicationRequest" },
           },
         },
       },
@@ -44,7 +44,7 @@ const generateOpenApi = () => {
         description: "Job application created successfully",
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/CreateJobApplicationResponse" },
+            schema: { $ref: "#/components/schemas/CreateJobApplicationResponse" },
           },
         },
       },
@@ -70,7 +70,7 @@ const generateOpenApi = () => {
       body: {
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/GenerateResumeRequest" },
+            schema: { $ref: "#/components/schemas/GenerateResumeRequest" },
           },
         },
       },
@@ -136,11 +136,14 @@ const generateOpenApi = () => {
   registry.registerPath({
     method: "get",
     operationId: "getJobApplication",
-    path: "/api/v1/job-application/:id",
+    path: "/api/v1/job-application/{id}",
     description: "Get a job application by ID",
     request: {
       params: z.object({
-        id: z.string().describe("The ID of the job application"),
+        id: z.string().openapi({
+          description: "The ID of the job application",
+          example: "123e4567-e89b-12d3-a456-426614174000 or 123e4567e89b12d3a456426614174000",
+        }),
       }),
     },
     responses: {

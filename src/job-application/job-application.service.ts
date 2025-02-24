@@ -2,7 +2,7 @@ import appConfig from "../app/config";
 import { OpportunityType } from "../shared/entities/opportunity.entity";
 import { CompanyRepository } from "../shared/repositories/company.respository";
 import { OpportunityRepository } from "../shared/repositories/opportunity.repository";
-import { ImportJobApplicationRequest } from "./types";
+import { CreateJobApplicationRequest } from "./types";
 
 export class JobApplicationService {
   private currentCycle: string = appConfig.job_application.current_cycle;
@@ -12,7 +12,11 @@ export class JobApplicationService {
     private readonly companyRepository: CompanyRepository = new CompanyRepository()
   ) {}
 
-  async import(application: ImportJobApplicationRequest) {
+  async findById(id: string) {
+    return await this.opportunityRepository.findOneById(id);
+  }
+
+  async import(application: CreateJobApplicationRequest) {
     // Try to find existing job application for this period
     const existingApplication = await this.findExistingJobApplication(application);
     // If found, return the existing job application
@@ -25,7 +29,7 @@ export class JobApplicationService {
     return newApplication;
   }
 
-  private findExistingJobApplication(application: ImportJobApplicationRequest) {
+  private findExistingJobApplication(application: CreateJobApplicationRequest) {
     // Try to find existing job application for this period
     const existingApplication = this.opportunityRepository.findOneMatchingOpportunity({
       type: OpportunityType.JOB_APPLICATION,
@@ -38,7 +42,7 @@ export class JobApplicationService {
     return existingApplication;
   }
 
-  private async createNewJobApplication(application: ImportJobApplicationRequest) {
+  private async createNewJobApplication(application: CreateJobApplicationRequest) {
     // Searches for company
     let company = await this.companyRepository.findOneMatchingCompany({
       name: application.company_name,

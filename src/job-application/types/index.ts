@@ -26,7 +26,7 @@ export type JobApplicationEducation = {
   minor: string;
 };
 
-export const ImportJobApplicationRequestSchema = z.object({
+export const CreateJobApplicationRequestSchema = z.object({
   company_name: z.string().describe("The name of the company offering the job"),
   company_website_url: z.string().optional().describe("The official website URL of the company"),
   company_linkedin_url: z.string().optional().describe("The LinkedIn profile URL of the company"),
@@ -45,7 +45,7 @@ export const ImportJobApplicationRequestSchema = z.object({
   max_estimated_value: z.number().optional().describe("The maximum estimated value in USD and either hourly or yearly"),
 });
 
-export type ImportJobApplicationRequest = z.infer<typeof ImportJobApplicationRequestSchema>;
+export type CreateJobApplicationRequest = z.infer<typeof CreateJobApplicationRequestSchema>;
 
 // Resume Types
 export enum ResumeSkillSetType {
@@ -138,7 +138,9 @@ export const JobApplicationSchema = z.object({
   is_draft: z.boolean().optional(),
 });
 
-export const ImportJobApplicationResponseSchema = z.object({
+export const GetJobApplicationResponseSchema = JobApplicationSchema;
+
+export const CreateJobApplicationResponseSchema = z.object({
   message: z.string(),
   job_application: JobApplicationSchema,
 });

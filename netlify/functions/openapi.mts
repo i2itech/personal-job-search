@@ -7,9 +7,10 @@ import {
   GenerateCoverLetterResponseSchema,
   GenerateResumeRequestSchema,
   GenerateResumeResponseSchema,
-  ImportJobApplicationRequest,
-  ImportJobApplicationRequestSchema,
-  ImportJobApplicationResponseSchema,
+  CreateJobApplicationRequest,
+  CreateJobApplicationRequestSchema,
+  CreateJobApplicationResponseSchema,
+  GetJobApplicationResponseSchema,
 } from "../../src/job-application/types";
 import appConfig from "../../src/app/config";
 
@@ -26,24 +27,24 @@ const generateOpenApi = () => {
   // Define API paths
   registry.registerPath({
     method: "post",
-    operationId: "importJobApplication",
+    operationId: "createJobApplication",
     path: "/api/v1/job-application",
-    description: "Import a new job application",
+    description: "Create a new job application",
     request: {
       body: {
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/ImportJobApplicationRequest" },
+            schema: { $ref: "/components/schemas/CreateJobApplicationRequest" },
           },
         },
       },
     },
     responses: {
       200: {
-        description: "Job application imported successfully",
+        description: "Job application created successfully",
         content: {
           "application/json": {
-            schema: { $ref: "/components/schemas/ImportJobApplicationResponse" },
+            schema: { $ref: "/components/schemas/CreateJobApplicationResponse" },
           },
         },
       },
@@ -112,7 +113,7 @@ const generateOpenApi = () => {
     },
     responses: {
       200: {
-        description: "Job application imported successfully",
+        description: "Cover letter generated successfully",
         content: {
           "application/json": {
             schema: { $ref: "/components/schemas/GenerateCoverLetterResponse" },
@@ -132,13 +133,45 @@ const generateOpenApi = () => {
     },
   });
 
+  registry.registerPath({
+    method: "get",
+    operationId: "getJobApplication",
+    path: "/api/v1/job-application/:id",
+    description: "Get a job application by ID",
+    request: {
+      params: z.object({
+        id: z.string().describe("The ID of the job application"),
+      }),
+    },
+    responses: {
+      200: {
+        description: "Job application imported successfully",
+        content: {
+          "application/json": {
+            schema: { $ref: "/components/schemas/GetJobApplicationResponse" },
+          },
+        },
+      },
+      500: {
+        description: "Server error",
+        content: {
+          "application/json": {
+            schema: z.object({
+              error: z.string(),
+            }),
+          },
+        },
+      },
+    },
+  });
   // Register your schemas
-  registry.register("ImportJobApplicationRequest", ImportJobApplicationRequestSchema);
+  registry.register("CreateJobApplicationRequest", CreateJobApplicationRequestSchema);
   registry.register("GenerateResumeRequest", GenerateResumeRequestSchema);
   registry.register("GenerateCoverLetterRequest", GenerateCoverLetterRequestSchema);
-  registry.register("ImportJobApplicationResponse", ImportJobApplicationResponseSchema);
+  registry.register("CreateJobApplicationResponse", CreateJobApplicationResponseSchema);
   registry.register("GenerateResumeResponse", GenerateResumeResponseSchema);
   registry.register("GenerateCoverLetterResponse", GenerateCoverLetterResponseSchema);
+  registry.register("GetJobApplicationResponse", GetJobApplicationResponseSchema);
 
   const generator = new OpenApiGeneratorV3(registry.definitions);
   return generator.generateDocument({
@@ -171,7 +204,7 @@ export default async (req: Request, context: Context) => {
   }
 };
 
-const importJobApplication = async (body: ImportJobApplicationRequest) => {
+const importJobApplication = async (body: CreateJobApplicationRequest) => {
   try {
     const jobApplicationService = new JobApplicationService();
     const jobApplication = await jobApplicationService.import(body);

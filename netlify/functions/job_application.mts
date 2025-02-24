@@ -20,7 +20,7 @@ export default async (req: Request, context: Context) => {
 const createJobApplication = async (body: CreateJobApplicationRequest) => {
   try {
     const jobApplicationService = new JobApplicationService();
-    const jobApplication = await jobApplicationService.import(body);
+    const jobApplication = await jobApplicationService.create(body);
 
     return new Response(
       JSON.stringify({

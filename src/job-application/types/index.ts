@@ -26,6 +26,42 @@ export type JobApplicationEducation = {
   minor: string;
 };
 
+export const JobApplicationSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  type: z.nativeEnum(OpportunityType),
+  company_id: z.string().optional(),
+  company_name: z.string().optional(),
+  posting_url: z.string().optional(),
+  application_status: z.string().optional(),
+  lead_status: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  job_description: z.string().optional(),
+  job_analysis: z.string().optional(),
+  resume: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      url: z.string().describe("The Google Drive URL of the resume file"),
+    })
+    .optional(),
+  cover_letter: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      url: z.string().describe("The Google Drive URL of the cover letter file"),
+    })
+    .optional(),
+  min_estimated_value: z.number().optional(),
+  max_estimated_value: z.number().optional(),
+  estimated_value: z.number().optional(),
+  date_applied: z.string().optional(),
+  pay_type: z.string().optional(),
+  cycle: z.string().optional(),
+  results: z.string().optional(),
+  is_draft: z.boolean().optional(),
+});
+
 export const CreateJobApplicationRequestSchema = z.object({
   company_name: z.string().describe("The name of the company offering the job"),
   company_website_url: z.string().optional().describe("The official website URL of the company"),
@@ -47,6 +83,8 @@ export const CreateJobApplicationRequestSchema = z.object({
 
 export type CreateJobApplicationRequest = z.infer<typeof CreateJobApplicationRequestSchema>;
 
+export const UpdateJobApplicationRequestSchema = JobApplicationSchema.partial();
+export type UpdateJobApplicationRequest = z.infer<typeof UpdateJobApplicationRequestSchema>;
 // Resume Types
 export enum ResumeSkillSetType {
   PROFESSIONAL_EXPERTISE = "Professional Expertise",
@@ -101,42 +139,6 @@ export const GenerateCoverLetterRequestSchema = z.object({
 });
 
 export type GenerateCoverLetterRequest = z.infer<typeof GenerateCoverLetterRequestSchema>;
-
-export const JobApplicationSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  type: z.nativeEnum(OpportunityType),
-  company_id: z.string().optional(),
-  company_name: z.string().optional(),
-  posting_url: z.string().optional(),
-  application_status: z.string().optional(),
-  lead_status: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  job_description: z.string().optional(),
-  job_analysis: z.string().optional(),
-  resume: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      url: z.string().describe("The Google Drive URL of the resume file"),
-    })
-    .optional(),
-  cover_letter: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      url: z.string().describe("The Google Drive URL of the cover letter file"),
-    })
-    .optional(),
-  min_estimated_value: z.number().optional(),
-  max_estimated_value: z.number().optional(),
-  estimated_value: z.number().optional(),
-  date_applied: z.string().optional(),
-  pay_type: z.string().optional(),
-  cycle: z.string().optional(),
-  results: z.string().optional(),
-  is_draft: z.boolean().optional(),
-});
 
 export const GetJobApplicationResponseSchema = JobApplicationSchema;
 

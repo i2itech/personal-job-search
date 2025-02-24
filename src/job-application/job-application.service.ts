@@ -2,7 +2,7 @@ import appConfig from "../app/config";
 import { OpportunityType } from "../shared/entities/opportunity.entity";
 import { CompanyRepository } from "../shared/repositories/company.respository";
 import { OpportunityRepository } from "../shared/repositories/opportunity.repository";
-import { CreateJobApplicationRequest } from "./types";
+import { CreateJobApplicationRequest, UpdateJobApplicationRequest } from "./types";
 
 export class JobApplicationService {
   private currentCycle: string = appConfig.job_application.current_cycle;
@@ -21,7 +21,7 @@ export class JobApplicationService {
     }
   }
 
-  async import(application: CreateJobApplicationRequest) {
+  async create(application: CreateJobApplicationRequest) {
     // Try to find existing job application for this period
     const existingApplication = await this.findExistingJobApplication(application);
     // If found, return the existing job application
@@ -32,6 +32,23 @@ export class JobApplicationService {
     const newApplication = await this.createNewJobApplication(application);
     // Return the new job application
     return newApplication;
+  }
+
+  async update(id: string, application: UpdateJobApplicationRequest) {
+    // Try to find existing job application for this period
+    const existingApplication = await this.findById(id);
+    // If not found, throw an error
+    if (!existingApplication) {
+      throw new Error("Job application not found");
+    }
+    // Update the job application
+    const updatedApplication = await this.opportunityRepository.updateOpportunity({
+      ...application,
+      id,
+      date_applied: application.date_applied ? new Date(application.date_applied) : undefined,
+    });
+    // Return the updated job application
+    return updatedApplication;
   }
 
   private findExistingJobApplication(application: CreateJobApplicationRequest) {

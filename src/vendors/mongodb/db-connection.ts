@@ -2,17 +2,12 @@ import mongoose from "mongoose";
 import appConfig from "../../app/config";
 
 let isConnected = false;
-
 // Database connection function
 async function connectDB() {
-  if (isConnected) {
-    return;
-  }
-
   try {
     await mongoose.connect(appConfig().mongodb.url);
-    isConnected = true;
     console.log("MongoDB connected successfully");
+    isConnected = true;
 
     // Handle application shutdown
     process.on("SIGINT", async () => {
@@ -49,7 +44,7 @@ export async function useDB<T>(callback: () => Promise<T>): Promise<T> {
   await connectDB();
   try {
     return await callback();
-  } catch (error) {
-    throw error;
+  } finally {
+    await disconnectDB();
   }
 }

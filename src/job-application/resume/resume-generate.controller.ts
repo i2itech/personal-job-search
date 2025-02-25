@@ -10,7 +10,7 @@ export class ResumeGenerateController extends BaseController {
 
   @NetlifyHttpMethod("POST")
   public async generateResume(@Body() body: GenerateResumeRequest) {
-    const jobApplication = this.resumeService.generateResume(body);
+    const jobApplication = await this.resumeService.generateResume(body);
     return {
       message: "Resume generated successfully and job application updated",
       job_application: jobApplication,

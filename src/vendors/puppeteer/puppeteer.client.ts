@@ -10,7 +10,7 @@ export class PuppeteerClient {
       const page = await browser.newPage();
       console.info("New Page Created");
 
-      await page.setContent(html, { waitUntil: "load" });
+      await page.setContent(html, { waitUntil: "domcontentloaded" });
 
       console.info("Set Content");
       const pdf = await page.pdf({
@@ -31,12 +31,17 @@ export class PuppeteerClient {
 
   private async launchBrowser() {
     const executablePath = appConfig().puppeteer.chrome_path || (await chromium.executablePath());
+    const args = [
+      ...(appConfig().puppeteer.chrome_path ? [] : chromium.args),
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+    ];
     console.info("executablePath", executablePath);
     try {
       const browser = await puppeteer.launch({
         executablePath,
         headless: true,
-        args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+        args,
       });
       return browser;
     } catch (error) {

@@ -18,8 +18,8 @@ export default async (req: Request, context: Context) => {
 };
 
 const upsertResumeDetails = async (body: UpsertResumeDetailsRequest) => {
+  const resumeService = new ResumeService();
   try {
-    const resumeService = new ResumeService();
     const resumeDetails = await resumeService.upsertResumeDetails(body);
 
     return new Response(

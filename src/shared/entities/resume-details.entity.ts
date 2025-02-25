@@ -9,10 +9,10 @@ export class ResumeDetailsEntity extends BaseEntity implements ResumeDetails {
     Object.assign(this, partial);
   }
 
-  @prop({ required: true, index: true, unique: true })
+  @prop({ type: String, required: true, index: true, unique: true })
   job_application_id: string;
 
-  @prop({ required: false })
+  @prop({ type: String, required: false })
   summary?: string;
 
   @prop({ type: () => [Object], default: [] })

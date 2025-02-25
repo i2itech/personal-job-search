@@ -26,7 +26,7 @@ export class ResumeDetailsRepository {
     const existing = await this.findOneByJobApplication(entity.job_application_id);
     if (existing) {
       console.log("Existing resume details", existing);
-      return this.update(existing.id, entity);
+      return this.update(existing._id, entity);
     }
     console.log("Creating new resume details", entity);
     return this.create(new ResumeDetailsEntity(entity));

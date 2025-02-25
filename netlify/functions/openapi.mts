@@ -172,7 +172,7 @@ const generateOpenApi = () => {
     method: "post",
     operationId: "upsertResumeDetails",
     path: "/api/v1/job-application/resume",
-    description: "Upsert the resume details for a job application",
+    description: "Update the resume details for a job application",
     request: {
       body: {
         content: {
@@ -184,7 +184,7 @@ const generateOpenApi = () => {
     },
     responses: {
       200: {
-        description: "Job application imported successfully",
+        description: "Resume details updated successfully",
         content: {
           "application/json": {
             schema: UpsertResumeDetailsResponseSchema.openapi("UpsertResumeDetailsResponse"),

@@ -4,8 +4,14 @@ import { OpportunitySchema, ResumeDetailsSchema } from "../../../shared/types";
 // Create Job Application
 export const CreateJobApplicationRequestSchema = z.object({
   company_name: z.string().describe("The name of the company offering the job"),
-  company_website_url: z.string().optional().describe("The official website URL of the company"),
-  company_linkedin_url: z.string().optional().describe("The LinkedIn profile URL of the company"),
+  company_website_url: z
+    .string()
+    .optional()
+    .describe("The official website URL of the company. Either this or company_linkedin_url must be provided."),
+  company_linkedin_url: z
+    .string()
+    .optional()
+    .describe("The LinkedIn profile URL of the company. Either this or company_website_url must be provided."),
   job_title: z.string().describe("The title or designation of the job position"),
   job_description: z.string().describe("A detailed description of the job responsibilities and requirements"),
   job_analysis: z

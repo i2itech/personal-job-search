@@ -9,8 +9,9 @@ import { ResumeDetailsRepository } from "../../shared/repositories/resume-detail
 export class ResumeService {
   constructor(
     private readonly opportunityRepository: OpportunityRepository = new OpportunityRepository(),
-    private googleDriveClient: GoogleDriveClient = new GoogleDriveClient(),
-    private resumeDetailsRepository: ResumeDetailsRepository = new ResumeDetailsRepository()
+    private readonly googleDriveClient: GoogleDriveClient = new GoogleDriveClient(),
+    private readonly resumeDetailsRepository: ResumeDetailsRepository = new ResumeDetailsRepository(),
+    private readonly puppeteerClient: PuppeteerClient = new PuppeteerClient()
   ) {}
 
   async generateResume(request: GenerateResumeRequest) {
@@ -34,7 +35,7 @@ export class ResumeService {
     let resume: Buffer;
     try {
       const resumeTemplate = generateResumeTemplate(resumeDetails);
-      resume = await PuppeteerClient.createPDF(resumeTemplate);
+      resume = await this.puppeteerClient.createPDF(resumeTemplate);
     } catch (error) {
       console.error(error);
       throw new Error("Failed to generate resume");

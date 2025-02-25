@@ -3,7 +3,7 @@ import { Config, Context } from "@netlify/functions";
 import { ResumeService } from "../../src/job-application/resume/resume.service";
 import { UpsertResumeDetailsRequest } from "../../src/job-application/types";
 export const config: Config = {
-  path: "/api/v1/job-application/resume",
+  path: "/api/v1/resume",
 };
 
 export default async (req: Request, context: Context) => {

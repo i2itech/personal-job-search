@@ -3,7 +3,7 @@ import { ResumeService } from "../../src/job-application/resume/resume.service";
 import { GenerateResumeRequest } from "../../src/job-application/types";
 
 export const config: Config = {
-  path: "/api/v1/job-application/resume/generate",
+  path: "/api/v1/resume/generate",
 };
 
 export default async (req: Request, context: Context) => {

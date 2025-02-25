@@ -3,15 +3,8 @@ import appConfig from "../../app/config";
 import chromium from "@sparticuz/chromium";
 
 export class PuppeteerClient {
-  static async createPDF(html: string): Promise<Buffer> {
-    const executablePath = appConfig().puppeteer.chrome_path || (await chromium.executablePath());
-    console.info("executablePath", executablePath);
-    const browser = await puppeteer.launch({
-      executablePath,
-      headless: true,
-      args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
-    });
-
+  async createPDF(html: string): Promise<Buffer> {
+    const browser = await this.launchBrowser();
     try {
       // Add a small delay to ensure everything is rendered
       const page = await browser.newPage();
@@ -33,6 +26,23 @@ export class PuppeteerClient {
       throw error;
     } finally {
       await browser.close();
+    }
+  }
+
+  private async launchBrowser() {
+    const executablePath = appConfig().puppeteer.chrome_path || (await chromium.executablePath());
+    console.info("executablePath", executablePath);
+    try {
+      const browser = await puppeteer.launch({
+        executablePath,
+        headless: true,
+        args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+      });
+      return browser;
+    } catch (error) {
+      console.error("Error creating browser");
+      console.error(error);
+      throw error;
     }
   }
 }

@@ -12,7 +12,7 @@ export class CoverLetterController extends BaseController {
   }
 
   @NetlifyHttpMethod("POST")
-  private async generateCoverLetter(@Body() body: GenerateCoverLetterRequest) {
+  public async generateCoverLetter(@Body() body: GenerateCoverLetterRequest) {
     try {
       const jobApplication = await this.coverLetterService.generate(body);
 

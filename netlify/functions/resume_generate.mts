@@ -38,7 +38,7 @@ const generateResume = async (body: GenerateResumeRequest) => {
     console.error("Error processing job application:", error);
     return new Response(
       JSON.stringify({
-        error: "Failed to process application",
+        error: error.message,
       }),
       {
         status: 500,

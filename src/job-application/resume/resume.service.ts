@@ -76,12 +76,16 @@ export class ResumeService {
   }
 
   async upsertResumeDetails(request: UpsertResumeDetailsRequest) {
-    const opportunity = await this.opportunityRepository.findOneById(request.job_application_id);
+    const {
+      job_application_id,
+      details: { type, ...details },
+    } = request;
+    const opportunity = await this.opportunityRepository.findOneById(job_application_id);
     if (!opportunity) {
       throw new Error("Opportunity not found");
     }
 
-    const resumeDetails = await this.resumeDetailsRepository.upsert(request);
+    const resumeDetails = await this.resumeDetailsRepository.upsert({ job_application_id, ...details });
     return resumeDetails;
   }
 }

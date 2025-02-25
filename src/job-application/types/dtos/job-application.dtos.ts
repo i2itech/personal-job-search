@@ -37,23 +37,23 @@ export const UpdateJobApplicationResponseSchema = z.object({
   job_application: OpportunitySchema,
 });
 
-export const UpsertResumeDetailsRequestSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("summary"),
-    job_application_id: z.string(),
-    summary: z.string(),
-  }),
-  z.object({
-    type: z.literal("skill_sets"),
-    job_application_id: z.string(),
-    skill_sets: ResumeDetailsSchema.shape.skill_sets,
-  }),
-  z.object({
-    type: z.literal("work_experience"),
-    job_application_id: z.string(),
-    work_experience: ResumeDetailsSchema.shape.work_experience,
-  }),
-]);
+export const UpsertResumeDetailsRequestSchema = z.object({
+  job_application_id: z.string(),
+  details: z.discriminatedUnion("type", [
+    z.object({
+      type: z.literal("summary"),
+      summary: z.string(),
+    }),
+    z.object({
+      type: z.literal("skill_sets"),
+      skill_sets: ResumeDetailsSchema.shape.skill_sets,
+    }),
+    z.object({
+      type: z.literal("work_experience"),
+      work_experience: ResumeDetailsSchema.shape.work_experience,
+    }),
+  ]),
+});
 
 export type UpsertResumeDetailsRequest = z.infer<typeof UpsertResumeDetailsRequestSchema>;
 

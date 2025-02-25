@@ -34,7 +34,7 @@ const generateOpenApi = () => {
       body: {
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/CreateJobApplicationRequest" },
+            schema: CreateJobApplicationRequestSchema.openapi("CreateJobApplicationRequest"),
           },
         },
       },
@@ -44,43 +44,7 @@ const generateOpenApi = () => {
         description: "Job application created successfully",
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/CreateJobApplicationResponse" },
-          },
-        },
-      },
-      500: {
-        description: "Server error",
-        content: {
-          "application/json": {
-            schema: z.object({
-              error: z.string(),
-            }),
-          },
-        },
-      },
-    },
-  });
-
-  registry.registerPath({
-    method: "post",
-    operationId: "upsertResumeDetails",
-    path: "/api/v1/job-application/resume",
-    description: "Upsert the resume details for a job application",
-    request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: { $ref: "#/components/schemas/UpsertResumeDetailsRequest" },
-          },
-        },
-      },
-    },
-    responses: {
-      200: {
-        description: "Job application imported successfully",
-        content: {
-          "application/json": {
-            schema: { $ref: "#/components/schemas/UpsertResumeDetailsResponse" },
+            schema: CreateJobApplicationResponseSchema.openapi("CreateJobApplicationResponse"),
           },
         },
       },
@@ -106,7 +70,7 @@ const generateOpenApi = () => {
       body: {
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/GenerateResumeRequest" },
+            schema: GenerateResumeRequestSchema.openapi("GenerateResumeRequest"),
           },
         },
       },
@@ -116,7 +80,7 @@ const generateOpenApi = () => {
         description: "Job application imported successfully",
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/GenerateResumeResponse" },
+            schema: GenerateResumeResponseSchema.openapi("GenerateResumeResponse"),
           },
         },
       },
@@ -142,7 +106,7 @@ const generateOpenApi = () => {
       body: {
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/GenerateCoverLetterRequest" },
+            schema: GenerateCoverLetterRequestSchema.openapi("GenerateCoverLetterRequest"),
           },
         },
       },
@@ -152,7 +116,7 @@ const generateOpenApi = () => {
         description: "Cover letter generated successfully",
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/GenerateCoverLetterResponse" },
+            schema: GenerateCoverLetterResponseSchema.openapi("GenerateCoverLetterResponse"),
           },
         },
       },
@@ -187,7 +151,7 @@ const generateOpenApi = () => {
         description: "Job application imported successfully",
         content: {
           "application/json": {
-            schema: { $ref: "#/components/schemas/GetJobApplicationResponse" },
+            schema: GetJobApplicationResponseSchema.openapi("GetJobApplicationResponse"),
           },
         },
       },
@@ -203,16 +167,42 @@ const generateOpenApi = () => {
       },
     },
   });
-  // Register your schemas
-  registry.register("CreateJobApplicationRequest", CreateJobApplicationRequestSchema);
-  registry.register("GenerateResumeRequest", GenerateResumeRequestSchema);
-  registry.register("GenerateCoverLetterRequest", GenerateCoverLetterRequestSchema);
-  registry.register("CreateJobApplicationResponse", CreateJobApplicationResponseSchema);
-  registry.register("GenerateResumeResponse", GenerateResumeResponseSchema);
-  registry.register("GenerateCoverLetterResponse", GenerateCoverLetterResponseSchema);
-  registry.register("GetJobApplicationResponse", GetJobApplicationResponseSchema);
-  registry.register("UpsertResumeDetailsRequest", UpsertResumeDetailsRequestSchema);
-  registry.register("UpsertResumeDetailsResponse", UpsertResumeDetailsResponseSchema);
+
+  registry.registerPath({
+    method: "post",
+    operationId: "upsertResumeDetails",
+    path: "/api/v1/job-application/resume",
+    description: "Upsert the resume details for a job application",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: UpsertResumeDetailsRequestSchema.openapi("UpsertResumeDetailsRequest"),
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "Job application imported successfully",
+        content: {
+          "application/json": {
+            schema: UpsertResumeDetailsResponseSchema.openapi("UpsertResumeDetailsResponse"),
+          },
+        },
+      },
+      500: {
+        description: "Server error",
+        content: {
+          "application/json": {
+            schema: z.object({
+              error: z.string(),
+            }),
+          },
+        },
+      },
+    },
+  });
 
   const generator = new OpenApiGeneratorV3(registry.definitions);
   return generator.generateDocument({

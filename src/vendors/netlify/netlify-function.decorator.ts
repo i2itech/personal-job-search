@@ -12,8 +12,6 @@ export enum NetlifyHttpMethodParamType {
 
 export function NetlifyHttpMethod(method: string): MethodDecorator {
   return function (target: Object, propertyKey: string | symbol | undefined, descriptor: PropertyDescriptor) {
-    console.log("target", target);
-    console.log("propertyKey", propertyKey);
     if (propertyKey === undefined) {
       throw new Error("propertyKey cannot be undefined");
     }
@@ -40,7 +38,6 @@ export function NetlifyHttpMethod(method: string): MethodDecorator {
         })
       );
 
-      console.log("this", target);
       // Call the method on the new instance
       return originalMethod.apply(instance, args);
     };

@@ -20,10 +20,10 @@ export class NetlifyFunctionController {
         },
       });
     } catch (error) {
-      console.error("Error processing job application:", error);
+      console.error("Error in NetlifyFunctionController:", error);
       return new Response(
         JSON.stringify({
-          error: "Failed to process application",
+          error: error instanceof Error ? error.message : "An unknown error occurred",
         }),
         {
           status: 500,

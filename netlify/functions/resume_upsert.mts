@@ -1,4 +1,3 @@
-import "../../src/bootstrap";
 import { Config, Context } from "@netlify/functions";
 import { ResumeDetailsController } from "../../src/job-application/resume/resume-details.controller";
 

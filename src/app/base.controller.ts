@@ -1,3 +1,4 @@
+import "./bootstrap";
 import { useDB } from "../vendors/mongodb/db-connection";
 import { NetlifyFunctionController } from "../vendors/netlify/netlify-function.controller";
 

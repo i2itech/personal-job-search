@@ -1,5 +1,4 @@
 import { Config, Context } from "@netlify/functions";
-import "../../src/bootstrap";
 import { CoverLetterController } from "../../src/job-application/cover-letter/cover-letter.controller";
 
 // const CoverLetterFunctionInstance = new CoverLetterController() as NetlifyFunctionController;

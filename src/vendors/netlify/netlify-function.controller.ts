@@ -10,6 +10,28 @@ export class NetlifyFunctionController {
     if (!handler) {
       throw new Error(`Method ${method} not implemented`);
     }
-    return handler(req, context);
+
+    try {
+      const result = await handler(req, context);
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("Error processing job application:", error);
+      return new Response(
+        JSON.stringify({
+          error: "Failed to process application",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
   }
 }

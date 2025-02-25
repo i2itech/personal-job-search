@@ -1,6 +1,6 @@
 import { NetlifyFunctionController } from "../vendors/netlify/netlify-function.controller";
 
-export abstract class BaseFunction extends NetlifyFunctionController {
+export abstract class BaseController extends NetlifyFunctionController {
   constructor() {
     super();
   }

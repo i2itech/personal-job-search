@@ -1,4 +1,4 @@
-import { BaseFunction as BaseController } from "../../app/base.function";
+import { BaseController as BaseController } from "../../app/base.controller";
 import { Body, NetlifyHttpMethod } from "../../vendors/netlify/netlify-function.decorator";
 import { GenerateCoverLetterRequest } from "../types";
 import { CoverLetterService } from "./cover-letter.service";

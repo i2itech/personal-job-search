@@ -1,14 +1,15 @@
-import { index, modelOptions, prop } from "@typegoose/typegoose";
+import { modelOptions, prop } from "@typegoose/typegoose";
 import { ResumeDetails, ResumeSkillSet, ResumeWorkExperience } from "../types";
+import { BaseEntity } from "./base.entity";
 
 @modelOptions({ schemaOptions: { collection: "resume" } })
-@index({ job_application_id: 1 }, { unique: true })
-export class ResumeDetailsEntity implements ResumeDetails {
+export class ResumeDetailsEntity extends BaseEntity implements ResumeDetails {
   constructor(partial: Partial<ResumeDetailsEntity> = {}) {
+    super();
     Object.assign(this, partial);
   }
 
-  @prop({ required: true, _id: true })
+  @prop({ required: true, index: true, unique: true })
   job_application_id: string;
 
   @prop({ required: false })

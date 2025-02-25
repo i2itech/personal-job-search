@@ -1,20 +1,18 @@
 import { extendZodWithOpenApi, OpenApiGeneratorV3, OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Config, Context } from "@netlify/functions";
 import { z } from "zod";
-import { JobApplicationService } from "../../src/job-application/job-application.service";
+import appConfig from "../../src/app/config";
 import {
+  CreateJobApplicationRequestSchema,
+  CreateJobApplicationResponseSchema,
   GenerateCoverLetterRequestSchema,
   GenerateCoverLetterResponseSchema,
   GenerateResumeRequestSchema,
   GenerateResumeResponseSchema,
-  CreateJobApplicationRequest,
-  CreateJobApplicationRequestSchema,
-  CreateJobApplicationResponseSchema,
   GetJobApplicationResponseSchema,
   UpsertResumeDetailsRequestSchema,
   UpsertResumeDetailsResponseSchema,
 } from "../../src/job-application/types";
-import appConfig from "../../src/app/config";
 
 extendZodWithOpenApi(z);
 
@@ -225,7 +223,7 @@ const generateOpenApi = () => {
     },
     servers: [
       {
-        url: appConfig.app.server_base_url,
+        url: appConfig().app.server_base_url,
       },
     ],
   });

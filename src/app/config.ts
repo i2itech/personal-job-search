@@ -20,32 +20,37 @@ export interface Config {
   };
 }
 
-const personalInfo = JSON.parse(process.env.PERSONAL_INFO || "{}") as JobApplicationPersonalInfo;
-const googleDriveCredentials = JSON.parse(process.env.GOOGLE_DRIVE_API_CREDENTIALS || "{}");
-export default {
-  app: {
-    server_base_url: process.env.BASE_URL || "",
-  },
-  job_application: {
-    current_cycle: "2025 - Q1",
-    personal_info: personalInfo,
-    google_drive: {
-      cover_letter_folder_id: process.env.COVER_LETTER_FOLDER_ID || "",
-      resume_folder_id: process.env.RESUME_FOLDER_ID || "",
+const appConfig = () => {
+  const personalInfo = JSON.parse(process.env.PERSONAL_INFO || "{}") as JobApplicationPersonalInfo;
+  const googleDriveCredentials = JSON.parse(process.env.GOOGLE_DRIVE_API_CREDENTIALS || "{}");
+
+  return {
+    app: {
+      server_base_url: process.env.BASE_URL || "",
     },
-  },
-  notion: {
-    api_key: process.env.NOTION_API_KEY || "",
-  },
-  google: {
-    drive: {
-      credentials: googleDriveCredentials,
+    job_application: {
+      current_cycle: "2025 - Q1",
+      personal_info: personalInfo,
+      google_drive: {
+        cover_letter_folder_id: process.env.COVER_LETTER_FOLDER_ID || "",
+        resume_folder_id: process.env.RESUME_FOLDER_ID || "",
+      },
     },
-  },
-  puppeteer: {
-    chrome_path: process.env.CHROME_PATH,
-  },
-  mongodb: {
-    url: process.env.MONGODB_URL || "",
-  },
-} as Config;
+    notion: {
+      api_key: process.env.NOTION_API_KEY || "",
+    },
+    google: {
+      drive: {
+        credentials: googleDriveCredentials,
+      },
+    },
+    puppeteer: {
+      chrome_path: process.env.CHROME_PATH,
+    },
+    mongodb: {
+      url: process.env.MONGODB_URL || "",
+    },
+  } as Config;
+};
+
+export default () => appConfig();

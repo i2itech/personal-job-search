@@ -33,7 +33,7 @@ export class ResumeService {
 
     let resume: Buffer;
     try {
-      const resumeTemplate = generateResumeTemplate(request);
+      const resumeTemplate = generateResumeTemplate(resumeDetails);
       resume = await PuppeteerClient.createPDF(resumeTemplate);
     } catch (error) {
       console.error(error);
@@ -52,7 +52,7 @@ export class ResumeService {
 
       resumeFile = await this.googleDriveClient.uploadFile({
         name: fileName,
-        folderId: appConfig.job_application.google_drive.resume_folder_id,
+        folderId: appConfig().job_application.google_drive.resume_folder_id,
         mimeType: "application/pdf",
         body: resume,
       });

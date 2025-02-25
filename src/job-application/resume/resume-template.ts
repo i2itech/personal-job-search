@@ -1,5 +1,5 @@
-import config from "../../app/config";
-import { GenerateResumeRequest, ResumeWorkExperience } from "../types";
+import appConfig from "../../app/config";
+import { ResumeDetails, ResumeWorkExperience } from "../../shared/types";
 
 const style = `<style>
     html {
@@ -62,8 +62,8 @@ const style = `<style>
   }
 </style>`;
 
-export const generateResumeTemplate = (request: GenerateResumeRequest) => {
-  const personalInfo = config.job_application.personal_info;
+export const generateResumeTemplate = (request: ResumeDetails) => {
+  const personalInfo = appConfig().job_application.personal_info;
   return `
 ${style}
 <div>

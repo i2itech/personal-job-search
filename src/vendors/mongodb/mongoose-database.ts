@@ -6,7 +6,7 @@ import appConfig from "../../app/config";
 // Database connection function
 async function connectDB() {
   try {
-    await mongoose.connect(appConfig.mongodb.url);
+    await mongoose.connect(appConfig().mongodb.url);
     console.log("MongoDB connected successfully");
 
     // Handle application shutdown
@@ -44,11 +44,7 @@ async function useDB<T>(callback: () => Promise<T>) {
   }
 }
 export class MongooseDatabase<TEntity> {
-  private readonly model: ReturnModelType<ClassConstructor<TEntity>>;
-
-  constructor(entityClass: ClassConstructor<TEntity>) {
-    this.model = getModelForClass(entityClass);
-  }
+  constructor(private readonly model: ReturnModelType<ClassConstructor<TEntity>>) {}
 
   async findAll(): Promise<TEntity[]> {
     return useDB(() => this.model.find());

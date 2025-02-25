@@ -4,7 +4,7 @@ import chromium from "@sparticuz/chromium";
 
 export class PuppeteerClient {
   static async createPDF(html: string): Promise<Buffer> {
-    const executablePath = appConfig.puppeteer.chrome_path || (await chromium.executablePath());
+    const executablePath = appConfig().puppeteer.chrome_path || (await chromium.executablePath());
     console.info("executablePath", executablePath);
     const browser = await puppeteer.launch({
       executablePath,

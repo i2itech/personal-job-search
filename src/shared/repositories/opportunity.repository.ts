@@ -1,7 +1,7 @@
 import { CreatePageParameters, UpdatePageParameters } from "@notionhq/client/build/src/api-endpoints";
 import { NotionClient } from "../../vendors/notion/notion.client";
-import { OpportunityEntity, OpportunityType } from "../entities/opportunity.entity";
-import { ExternalFile } from "../types";
+import { OpportunityEntity } from "../entities/opportunity.entity";
+import { ExternalFile, OpportunityType } from "../types";
 
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };

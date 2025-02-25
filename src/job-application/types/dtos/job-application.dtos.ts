@@ -75,6 +75,7 @@ export const GenerateResumeResponseSchema = z.object({
 });
 // Generate Cover Letter
 export const GenerateCoverLetterRequestSchema = z.object({
+  job_application_id: z.string().describe("Unique identifier of the job application to generate cover letter for"),
   cover_letter: z.string().describe("The content of the cover letter, tailored to the job application"),
 });
 

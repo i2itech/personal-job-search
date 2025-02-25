@@ -5,7 +5,7 @@ import { OpportunityType } from "../shared/types";
 import { CreateJobApplicationRequest, UpdateJobApplicationRequest } from "./types";
 
 export class JobApplicationService {
-  private currentCycle: string = appConfig.job_application.current_cycle;
+  private currentCycle: string = appConfig().job_application.current_cycle;
 
   constructor(
     private readonly opportunityRepository: OpportunityRepository = new OpportunityRepository(),

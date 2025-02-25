@@ -1,30 +1,31 @@
+import "../../src/bootstrap";
 import { Config, Context } from "@netlify/functions";
-import { ResumeService } from "../../../../src/job-application/resume/resume.service";
-import { GenerateResumeRequest } from "../../../../src/job-application/types";
+import { ResumeService } from "../../src/job-application/resume/resume.service";
+import { UpsertResumeDetailsRequest } from "../../src/job-application/types";
 export const config: Config = {
-  path: "/api/v1/job-application/resume/generate",
+  path: "/api/v1/job-application/resume",
 };
 
 export default async (req: Request, context: Context) => {
   switch (req.method) {
     case "POST": {
       const body = await req.json();
-      return await generateResume(body);
+      return await upsertResumeDetails(body);
     }
     default:
       return new Response("Method not allowed", { status: 405 });
   }
 };
 
-const generateResume = async (body: GenerateResumeRequest) => {
+const upsertResumeDetails = async (body: UpsertResumeDetailsRequest) => {
   try {
     const resumeService = new ResumeService();
-    const jobApplication = await resumeService.generateResume(body);
+    const resumeDetails = await resumeService.upsertResumeDetails(body);
 
     return new Response(
       JSON.stringify({
-        message: "Resume generated successfully and job application updated",
-        job_application: jobApplication,
+        message: "Resume details updated successfully",
+        resume_details: resumeDetails,
       }),
       {
         status: 200,

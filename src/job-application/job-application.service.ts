@@ -1,11 +1,11 @@
 import appConfig from "../app/config";
-import { OpportunityType } from "../shared/entities/opportunity.entity";
 import { CompanyRepository } from "../shared/repositories/company.respository";
 import { OpportunityRepository } from "../shared/repositories/opportunity.repository";
+import { OpportunityType } from "../shared/types";
 import { CreateJobApplicationRequest, UpdateJobApplicationRequest } from "./types";
 
 export class JobApplicationService {
-  private currentCycle: string = appConfig.job_application.current_cycle;
+  private currentCycle: string = appConfig().job_application.current_cycle;
 
   constructor(
     private readonly opportunityRepository: OpportunityRepository = new OpportunityRepository(),

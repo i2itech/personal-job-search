@@ -6,7 +6,7 @@ import { Readable } from "stream";
 export class GoogleDriveClient {
   private driveClient;
 
-  constructor(config: GoogleDriveConfig = appConfig.google.drive) {
+  constructor(config: GoogleDriveConfig = appConfig().google.drive) {
     if (!config.credentials || !config.credentials.private_key || !config.credentials.client_email) {
       throw new Error("Invalid Google Drive credentials. Please check your environment variables.");
     }

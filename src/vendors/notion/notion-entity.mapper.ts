@@ -27,10 +27,14 @@ export class NotionEntityMapper {
     const entity = new EntityClass();
     const notionProperties = getNotionProperties(EntityClass.prototype);
 
-    (entity as any).id = id;
-
     for (const [propertyKey, options] of Object.entries(notionProperties)) {
       if (!options.notionKey) continue;
+
+      if (options.type === "id") {
+        (entity as any).id = id;
+        continue;
+      }
+
       const notionValue = properties[options.notionKey];
       if (!notionValue) continue;
 
@@ -117,6 +121,8 @@ export class NotionEntityMapper {
       if (value === undefined) continue;
 
       if (!options.notionKey) continue;
+
+      if (options.type === "id") continue;
 
       const notionValue = this.createNotionValue(value, options.type);
       if (notionValue !== undefined) {

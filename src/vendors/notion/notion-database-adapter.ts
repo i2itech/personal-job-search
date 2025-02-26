@@ -32,7 +32,10 @@ export class NotionDatabaseAdapter<TEntity> implements Database<TEntity> {
 
   async findById(id: string): Promise<TEntity | null> {
     const result = await this.db.findById(id);
-    if (!result) return null;
+    if (!result) {
+      return null;
+    }
+
     return this.mapper.toEntity(result, this.EntityClass);
   }
 

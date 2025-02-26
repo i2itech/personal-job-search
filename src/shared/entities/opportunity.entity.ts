@@ -14,64 +14,64 @@ export class OpportunityEntity implements Opportunity {
 
   id: string;
 
-  @NotionEntityProperty({ type: "title" })
+  @NotionEntityProperty({ type: "title", notionKey: "Title" })
   title: string;
 
-  @NotionEntityProperty({ type: "select" })
+  @NotionEntityProperty({ type: "select", notionKey: "Type" })
   type: OpportunityType;
 
-  @NotionEntityProperty({ type: "relation" })
+  @NotionEntityProperty({ type: "relation", notionKey: "Company" })
   company_id?: string;
 
-  @NotionEntityProperty({ type: "rollup" })
+  @NotionEntityProperty({ type: "rollup", notionKey: "Company Name" })
   company_name?: string;
 
-  @NotionEntityProperty({ type: "url" })
+  @NotionEntityProperty({ type: "url", notionKey: "Posting URL" })
   posting_url?: string;
 
-  @NotionEntityProperty({ type: "select" })
+  @NotionEntityProperty({ type: "select", notionKey: "Application Status" })
   application_status?: string;
 
-  @NotionEntityProperty({ type: "select" })
+  @NotionEntityProperty({ type: "select", notionKey: "Lead Status" })
   lead_status?: string;
 
-  @NotionEntityProperty({ type: "multi_select" })
+  @NotionEntityProperty({ type: "multi_select", notionKey: "Tags" })
   tags?: string[] = [];
 
-  @NotionEntityProperty({ type: "rich_text" })
+  @NotionEntityProperty({ type: "rich_text", notionKey: "Job Description" })
   job_description?: string;
 
-  @NotionEntityProperty({ type: "rich_text" })
+  @NotionEntityProperty({ type: "rich_text", notionKey: "Job Analysis" })
   job_analysis?: string;
 
-  @NotionEntityProperty({ type: "files" })
+  @NotionEntityProperty({ type: "files", notionKey: "Resume" })
   resume?: ExternalFile;
 
-  @NotionEntityProperty({ type: "files" })
+  @NotionEntityProperty({ type: "files", notionKey: "Cover Letter" })
   cover_letter?: ExternalFile;
 
-  @NotionEntityProperty({ type: "number" })
+  @NotionEntityProperty({ type: "number", notionKey: "Min Estimated Value" })
   min_estimated_value?: number;
 
-  @NotionEntityProperty({ type: "number" })
+  @NotionEntityProperty({ type: "number", notionKey: "Max Estimated Value" })
   max_estimated_value?: number;
 
-  @NotionEntityProperty({ type: "formula" })
+  @NotionEntityProperty({ type: "formula", notionKey: "Estimated Value" })
   estimated_value?: number;
 
-  @NotionEntityProperty({ type: "date" })
+  @NotionEntityProperty({ type: "date", notionKey: "Date Applied" })
   date_applied?: Date;
 
-  @NotionEntityProperty({ type: "select" })
+  @NotionEntityProperty({ type: "select", notionKey: "Pay Type" })
   pay_type?: string;
 
-  @NotionEntityProperty({ type: "select" })
+  @NotionEntityProperty({ type: "select", notionKey: "Cycle" })
   cycle?: string;
 
-  @NotionEntityProperty({ type: "rich_text" })
+  @NotionEntityProperty({ type: "rich_text", notionKey: "Results" })
   results?: string;
 
-  @NotionEntityProperty({ type: "checkbox" })
+  @NotionEntityProperty({ type: "checkbox", notionKey: "Is Draft" })
   is_draft?: boolean;
 
   company?: CompanyEntity;

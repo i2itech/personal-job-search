@@ -5,6 +5,7 @@ export interface NotionEntityOptions {
 }
 
 type NotionPropertyType =
+  | "id"
   | "title"
   | "rich_text"
   | "select"

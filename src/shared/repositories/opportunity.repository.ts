@@ -1,9 +1,8 @@
-import { CreatePageParameters, UpdatePageParameters } from "@notionhq/client/build/src/api-endpoints";
+import { NotionDatabaseAdapter } from "../../vendors/notion/notion-database-adapter";
 import { NotionClient } from "../../vendors/notion/notion.client";
 import { OpportunityEntity } from "../entities/opportunity.entity";
-import { ExternalFile, OpportunityType } from "../types";
+import { OpportunityType } from "../types";
 import { BaseRepository } from "./base.repository";
-import { NotionDatabaseAdapter } from "../../vendors/notion/notion-database-adapter";
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };
 export class OpportunityRepository extends BaseRepository<OpportunityEntity> {

@@ -6,6 +6,7 @@ describe("NotionEntityMapper", () => {
 
   // Test entity class with all property types
   class TestEntity {
+    @NotionEntityProperty({ type: "id" })
     id: string;
 
     @NotionEntityProperty({ type: "title" })

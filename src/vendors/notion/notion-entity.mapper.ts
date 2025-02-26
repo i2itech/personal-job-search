@@ -15,9 +15,9 @@ export class NotionEntityMapper {
     };
   }
 
-  public toUpdatePageParameters<T>(entity: T): UpdatePageParameters {
+  public toUpdatePageParameters<T>(id: string, entity: Partial<T>): UpdatePageParameters {
     return {
-      page_id: (entity as any).id,
+      page_id: id,
       properties: this.toNotionProperties(entity) as UpdatePageProperties,
     };
   }
@@ -40,7 +40,7 @@ export class NotionEntityMapper {
     return entity;
   }
 
-  private extractNotionValue(value: any, type: string): any {
+  protected extractNotionValue(value: any, type: string): any {
     switch (type) {
       case "title":
         return value.title[0]?.plain_text;
@@ -136,7 +136,9 @@ export class NotionEntityMapper {
 
       case "rich_text":
         return {
-          rich_text: value.split("\n").map((line: string) => ({ text: { content: `${line}\n` } })),
+          rich_text: value.split("\n").map((line: string, index: number, array: string[]) => ({
+            text: { content: index < array.length - 1 ? `${line}\n` : line },
+          })),
         };
 
       case "select":
@@ -176,8 +178,7 @@ export class NotionEntityMapper {
         return {
           files: value ? [{ external: { url: value.url }, name: value.name }] : [],
         };
-
-      // Formula update not supported
+      case "rollup":
       case "formula":
         return undefined;
 

@@ -1,12 +1,13 @@
-import { NotionEntityProperty } from "../../vendors/notion/notion-entity.decorator";
+import { NotionEntity, NotionEntityProperty } from "../../vendors/notion/notion-entity.decorator";
 import { ExternalFile, Opportunity } from "../types";
 import { OpportunityType } from "../types/opportunity.types";
 import { CompanyEntity } from "./company.entity";
 import { ContactEntity } from "./contact.entity";
 
+@NotionEntity({
+  database_id: "f7dc427eca374fa3b91279e01cbed5eb",
+})
 export class OpportunityEntity implements Opportunity {
-  static DatabaseId: string = "f7dc427eca374fa3b91279e01cbed5eb";
-
   constructor(partial: Partial<OpportunityEntity> = {}) {
     Object.assign(this, partial);
   }

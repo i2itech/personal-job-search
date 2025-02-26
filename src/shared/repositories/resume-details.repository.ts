@@ -1,13 +1,8 @@
-import { getModelForClass } from "@typegoose/typegoose";
-import { MongooseDatabase } from "../../vendors/mongodb/mongoose-database";
+import { MongoDatabase } from "../../vendors/mongodb/mongo-database";
+import { Database } from "../database";
 import { ResumeDetailsEntity } from "../entities/resume-details.entity";
-
 export class ResumeDetailsRepository {
-  constructor(
-    private readonly db: MongooseDatabase<ResumeDetailsEntity> = new MongooseDatabase(
-      getModelForClass(ResumeDetailsEntity)
-    )
-  ) {}
+  constructor(private readonly db: Database<ResumeDetailsEntity> = new MongoDatabase(ResumeDetailsEntity)) {}
 
   async findOneByJobApplication(job_application_id: string) {
     return this.db.findOne({ job_application_id });

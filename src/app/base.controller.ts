@@ -8,7 +8,6 @@ export abstract class BaseController extends NetlifyFunctionController {
   }
 
   async handler(req: any, context: any): Promise<Response> {
-    console.log("BaseController handler called");
     return await useDB(async () => {
       return await super.handler(req, context);
     });

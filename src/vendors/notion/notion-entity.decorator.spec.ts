@@ -1,4 +1,9 @@
-import { NotionEntity, getNotionEntityMetadata } from "./notion-entity.decorator";
+import {
+  NotionEntity,
+  getNotionEntityMetadata,
+  NotionEntityProperty,
+  getNotionProperties,
+} from "./notion-entity.decorator";
 
 describe("NotionEntity Decorator", () => {
   it("should apply metadata to a class and retrieve it correctly", () => {
@@ -27,5 +32,32 @@ describe("NotionEntity Decorator", () => {
     expect(() => {
       getNotionEntityMetadata(TestEntityWithoutDecorator);
     }).toThrow(`No Notion entity metadata found for TestEntityWithoutDecorator`);
+  });
+
+  it("should correctly store and retrieve property metadata", () => {
+    @NotionEntity({
+      database_id: "test-db-123",
+    })
+    class TestEntityWithProperties {
+      @NotionEntityProperty({ type: "title" })
+      name: string;
+
+      @NotionEntityProperty({ type: "rich_text", notionKey: "description" })
+      desc: string;
+    }
+
+    const properties = getNotionProperties(TestEntityWithProperties.prototype);
+
+    expect(properties).toBeDefined();
+    expect(properties.name).toEqual({ type: "title", notionKey: "name" });
+    expect(properties.desc).toEqual({ type: "rich_text", notionKey: "description" });
+  });
+
+  it("should return empty object for properties when no decorators are used", () => {
+    class TestEntityNoProperties {}
+
+    const properties = getNotionProperties(TestEntityNoProperties.prototype);
+
+    expect(properties).toEqual({});
   });
 });

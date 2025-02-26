@@ -1,7 +1,8 @@
-export interface Database {
-  findAll<Entity>(): Promise<Entity[]>;
-  findById<Entity>(id: string): Promise<Entity>;
-  findBy<Entity>(query: any): Promise<Entity>;
-  update<Entity>(entity: Entity): Promise<Entity>;
-  create<Entity>(entity: Entity): Promise<Entity>;
+export interface Database<Entity> {
+  findAll(): Promise<Entity[]>;
+  findById(id: string): Promise<Entity>;
+  findBy(query: any): Promise<Entity[]>;
+  findOne(query: any): Promise<Entity>;
+  update(entity: Entity): Promise<Entity>;
+  create(entity: Entity): Promise<Entity>;
 }

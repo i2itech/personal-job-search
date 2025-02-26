@@ -2,11 +2,14 @@ import { CreatePageParameters, UpdatePageParameters } from "@notionhq/client/bui
 import { NotionClient } from "../../vendors/notion/notion.client";
 import { OpportunityEntity } from "../entities/opportunity.entity";
 import { ExternalFile, OpportunityType } from "../types";
+import { BaseRepository } from "./base.repository";
 
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };
-export class OpportunityRepository {
-  constructor(private readonly client: NotionClient = new NotionClient()) {}
+export class OpportunityRepository extends BaseRepository<OpportunityEntity> {
+  constructor(private readonly client: NotionClient = new NotionClient()) {
+    super(OpportunityEntity);
+  }
 
   async findOneById(id: string) {
     const response = await this.client.pages.retrieve({ page_id: id });

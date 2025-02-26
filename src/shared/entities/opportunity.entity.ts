@@ -1,3 +1,4 @@
+import { NotionEntityProperty } from "../../vendors/notion/notion-entity.decorator";
 import { ExternalFile, Opportunity } from "../types";
 import { OpportunityType } from "../types/opportunity.types";
 import { CompanyEntity } from "./company.entity";
@@ -11,26 +12,67 @@ export class OpportunityEntity implements Opportunity {
   }
 
   id: string;
+
+  @NotionEntityProperty({ type: "title" })
   title: string;
+
+  @NotionEntityProperty({ type: "select" })
   type: OpportunityType;
+
+  @NotionEntityProperty({ type: "relation" })
   company_id?: string;
+
+  @NotionEntityProperty({ type: "rollup" })
   company_name?: string;
+
+  @NotionEntityProperty({ type: "url" })
+  posting_url?: string;
+
+  @NotionEntityProperty({ type: "select" })
+  application_status?: string;
+
+  @NotionEntityProperty({ type: "select" })
+  lead_status?: string;
+
+  @NotionEntityProperty({ type: "multi_select" })
+  tags?: string[] = [];
+
+  @NotionEntityProperty({ type: "rich_text" })
+  job_description?: string;
+
+  @NotionEntityProperty({ type: "rich_text" })
+  job_analysis?: string;
+
+  @NotionEntityProperty({ type: "files" })
+  resume?: ExternalFile;
+
+  @NotionEntityProperty({ type: "files" })
+  cover_letter?: ExternalFile;
+
+  @NotionEntityProperty({ type: "number" })
+  min_estimated_value?: number;
+
+  @NotionEntityProperty({ type: "number" })
+  max_estimated_value?: number;
+
+  @NotionEntityProperty({ type: "formula" })
+  estimated_value?: number;
+
+  @NotionEntityProperty({ type: "date" })
+  date_applied?: Date;
+
+  @NotionEntityProperty({ type: "select" })
+  pay_type?: string;
+
+  @NotionEntityProperty({ type: "select" })
+  cycle?: string;
+
+  @NotionEntityProperty({ type: "rich_text" })
+  results?: string;
+
+  @NotionEntityProperty({ type: "checkbox" })
+  is_draft?: boolean;
+
   company?: CompanyEntity;
   primary_contacts?: ContactEntity[] = [];
-  posting_url?: string;
-  application_status?: string;
-  lead_status?: string;
-  tags?: string[] = [];
-  job_description?: string;
-  job_analysis?: string;
-  resume?: ExternalFile;
-  cover_letter?: ExternalFile;
-  min_estimated_value?: number;
-  max_estimated_value?: number;
-  estimated_value?: number;
-  date_applied?: Date;
-  pay_type?: string;
-  cycle?: string;
-  results?: string;
-  is_draft?: boolean;
 }

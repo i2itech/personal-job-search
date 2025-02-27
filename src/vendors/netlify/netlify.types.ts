@@ -2,17 +2,21 @@ import { Context } from "@netlify/functions";
 import { z } from "zod";
 import { HttpMethod, HttpDtoType, HttpStatusCode } from "../../shared/types/http.types";
 
+export type OpenApiRegisterPathModel = NetlifyHttpMethodMetadata & {
+  id: string;
+};
+
 // Decorator metadata types
 export interface NetlifyHttpControllerMetadata {
   path: string;
 }
 
-type QueryRequest = {
+export type QueryRequest = {
   params?: z.ZodSchema;
   query?: z.ZodSchema;
 };
 
-type BodyRequest = {
+export type BodyRequest = {
   params?: z.ZodSchema;
   body?:
     | {
@@ -37,25 +41,37 @@ export interface NetlifyHttpMethodResponse {
   schema: z.ZodSchema;
 }
 
-export interface NetlifyHttpMethodMetadata<T extends HttpMethod> {
-  method: T;
-  path?: string;
-  description: string;
-  request: NetlifyHttpMethodRequest[T];
-  responses: {
-    success: NetlifyHttpMethodResponse;
-    errors: NetlifyHttpMethodResponse[];
-  };
-}
+export type NetlifyHttpMethodMetadata =
+  | {
+      method: HttpMethod.GET | HttpMethod.DELETE;
+      path?: string;
+      description: string;
+      request: QueryRequest;
+      responses: {
+        success: NetlifyHttpMethodResponse;
+        errors: NetlifyHttpMethodResponse[];
+      };
+    }
+  | {
+      method: HttpMethod.POST | HttpMethod.PUT | HttpMethod.PATCH;
+      path?: string;
+      description: string;
+      request: BodyRequest;
+      responses: {
+        success: NetlifyHttpMethodResponse;
+        errors: NetlifyHttpMethodResponse[];
+      };
+    };
 
 // Decorator Behind the scenes
 type NetlifyHttpMethodHandler = (req: Request, context: Context) => Promise<any>;
 export type NetlifyHttpMethod = {
   handler: NetlifyHttpMethodHandler;
-  metadata: NetlifyHttpMethodMetadata<HttpMethod>;
+  metadata: NetlifyHttpMethodMetadata;
 };
 
-export type NetlifyHttpMethods = Record<HttpMethod, NetlifyHttpMethod>;
+/* Store the methods for each decorated function of the controller, string is the function name */
+export type NetlifyHttpMethods = Record<string, NetlifyHttpMethod>;
 
 export enum NetlifyHttpMethodParamType {
   PARAMS = "params",

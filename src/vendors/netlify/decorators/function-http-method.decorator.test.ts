@@ -1,63 +1,52 @@
 import { z } from "zod";
 import { HttpDtoType, HttpMethod, HttpStatusCode } from "../../../shared/types/http.types";
 import { NetlifyFunctionController } from "../netlify-function.controller";
-import * as utils from "../netlify-function.utils";
-import * as paramsDecorator from "./function-http-method-params.decorator";
-import { HttpMethodParams } from "./function-http-method-params.decorator";
+import { Body, Params } from "./function-http-method-params.decorator";
 import { NetlifyHttpMethod, getNetlifyHttpMethod } from "./function-http-method.decorator";
 
-describe("NetlifyHttpMethod Decorator", () => {
-  // Mock class for testing
-  class TestController extends NetlifyFunctionController {
-    @NetlifyHttpMethod({
-      method: HttpMethod.GET,
-      description: "Test method",
-      request: {},
-      responses: {
-        success: {
-          statusCode: HttpStatusCode.OK,
-          description: "Test method",
-          type: HttpDtoType.JSON,
-          schema: z.object({}),
-        },
-        errors: [],
+// Mock class for testing
+class TestController extends NetlifyFunctionController {
+  @NetlifyHttpMethod({
+    method: HttpMethod.POST,
+    description: "Test method",
+    request: {},
+    responses: {
+      success: {
+        statusCode: HttpStatusCode.OK,
+        description: "Test method",
+        type: HttpDtoType.JSON,
+        schema: z.object({}),
       },
-    })
-    async testMethod(params: any, body: any) {
-      return { params, body };
-    }
+      errors: [],
+    },
+  })
+  async testMethod(@Body() body: any, @Params() params: any) {
+    return { params, body };
   }
-
+}
+describe("NetlifyHttpMethod Decorator", () => {
   const mockParams = { id: "123" } as any;
   const mockBody = { data: "test" } as any;
-  const mockContext = { context: "test" } as any;
-  const mockRequest = new Request("http://test.com");
-
-  beforeEach(() => {
-    jest.spyOn(utils, "getFunctionParams").mockReturnValue(mockParams);
-    jest.spyOn(utils, "getFunctionBody").mockReturnValue(mockBody);
-    jest.spyOn(paramsDecorator, "getParams").mockReturnValue([HttpMethodParams.PARAMS, HttpMethodParams.BODY]);
-  });
+  const mockContext = { params: mockParams } as any;
+  const mockRequest = { method: HttpMethod.POST, json: () => Promise.resolve(mockBody) } as any;
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   it("should decorate method and store metadata", () => {
-    const method = getNetlifyHttpMethod(new TestController(), HttpMethod.GET);
+    const method = getNetlifyHttpMethod(TestController, "testMethod");
     expect(method).toBeDefined();
-    expect(method?.metadata.method).toBe(HttpMethod.GET);
+    expect(method?.metadata.method).toBe(HttpMethod.POST);
   });
 
   it("should execute decorated method with correct parameters", async () => {
     const controller = new TestController();
-    const method = getNetlifyHttpMethod(controller, HttpMethod.GET);
+    const method = getNetlifyHttpMethod(controller, "testMethod");
 
     const result = await method?.handler(mockRequest, mockContext);
 
     expect(result).toEqual({ params: mockParams, body: mockBody });
-    expect(utils.getFunctionParams).toHaveBeenCalledWith(mockContext);
-    expect(utils.getFunctionBody).toHaveBeenCalledWith(mockRequest);
   });
 
   it("should throw error when propertyKey is undefined", () => {
@@ -80,7 +69,7 @@ describe("NetlifyHttpMethod Decorator", () => {
   });
 
   it("should return undefined for non-existent HTTP method", () => {
-    const method = getNetlifyHttpMethod(new TestController(), HttpMethod.POST);
+    const method = getNetlifyHttpMethod(new TestController(), "undeclaredMethod");
     expect(method).toBeUndefined();
   });
 });

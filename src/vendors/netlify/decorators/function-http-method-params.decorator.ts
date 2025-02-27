@@ -42,9 +42,9 @@ export const addParams = (
   if (propertyKey === undefined) {
     throw new Error("propertyKey cannot be undefined");
   }
-  const existingParams = Reflect.getMetadata("params", target, propertyKey) || [];
+  const existingParams = Reflect.getMetadata(PARAMS_METADATA_KEY, target, propertyKey) || {};
   existingParams[parameterIndex] = param;
-  Reflect.defineMetadata("params", existingParams, target, propertyKey);
+  Reflect.defineMetadata(PARAMS_METADATA_KEY, existingParams, target, propertyKey);
 };
 
 export const getParams = (target: any, propertyKey: string | symbol | undefined): HttpMethodParams[] => {
@@ -52,14 +52,6 @@ export const getParams = (target: any, propertyKey: string | symbol | undefined)
     throw new Error("propertyKey cannot be undefined");
   }
 
-  return Reflect.getMetadata("params", target, propertyKey) || [];
-};
-
-export const getParam = (
-  target: any,
-  propertyKey: string | symbol | undefined,
-  parameterIndex: number
-): HttpMethodParams => {
-  const params = getParams(target, propertyKey);
-  return params[parameterIndex];
+  const params = Reflect.getMetadata(PARAMS_METADATA_KEY, target, propertyKey) || {};
+  return Object.values(params);
 };

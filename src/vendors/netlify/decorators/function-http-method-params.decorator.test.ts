@@ -1,12 +1,4 @@
-import {
-  Body,
-  Header,
-  HttpMethodParams,
-  Params,
-  Query,
-  getParam,
-  getParams,
-} from "./function-http-method-params.decorator";
+import { Body, Header, HttpMethodParams, Params, Query, getParams } from "./function-http-method-params.decorator";
 
 describe("HTTP Method Parameter Decorators", () => {
   // Test class to use decorators
@@ -21,12 +13,6 @@ describe("HTTP Method Parameter Decorators", () => {
   }
 
   describe("Parameter Decorators", () => {
-    let testController: TestController;
-
-    beforeEach(() => {
-      testController = new TestController();
-    });
-
     it("should properly decorate parameters with @Params", () => {
       const params = getParams(TestController.prototype, "testMethod");
       expect(params[0]).toBe(HttpMethodParams.PARAMS);
@@ -47,11 +33,6 @@ describe("HTTP Method Parameter Decorators", () => {
       expect(params[3]).toBe(HttpMethodParams.HEADER);
     });
 
-    it("should get specific parameter type using getParam", () => {
-      const bodyParamType = getParam(TestController.prototype, "testMethod", 1);
-      expect(bodyParamType).toBe(HttpMethodParams.BODY);
-    });
-
     it("should handle methods with single parameter", () => {
       const params = getParams(TestController.prototype, "singleParamMethod");
       expect(params).toHaveLength(1);
@@ -66,12 +47,6 @@ describe("HTTP Method Parameter Decorators", () => {
       }).toThrow("propertyKey cannot be undefined");
     });
 
-    it("should throw error when propertyKey is undefined in getParam", () => {
-      expect(() => {
-        getParam({}, undefined, 0);
-      }).toThrow("propertyKey cannot be undefined");
-    });
-
     it("should return empty array for non-decorated parameters", () => {
       class NonDecoratedController {
         method(param: any) {}
@@ -79,11 +54,6 @@ describe("HTTP Method Parameter Decorators", () => {
 
       const params = getParams(NonDecoratedController.prototype, "method");
       expect(params).toEqual([]);
-    });
-
-    it("should return undefined for non-existent parameter index", () => {
-      const param = getParam(TestController.prototype, "testMethod", 99);
-      expect(param).toBeUndefined();
     });
   });
 

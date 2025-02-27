@@ -1,19 +1,14 @@
 import { MongoDatabase } from "../../vendors/mongodb/mongo-database";
 import { Database } from "../database";
 import { ResumeDetailsEntity } from "../entities/resume-details.entity";
-export class ResumeDetailsRepository {
-  constructor(private readonly db: Database<ResumeDetailsEntity> = new MongoDatabase(ResumeDetailsEntity)) {}
+import { BaseRepository } from "./base.repository";
+export class ResumeDetailsRepository extends BaseRepository<ResumeDetailsEntity> {
+  constructor(db: Database<ResumeDetailsEntity> = new MongoDatabase(ResumeDetailsEntity)) {
+    super(db);
+  }
 
   async findOneByJobApplication(job_application_id: string) {
     return this.db.findOne({ job_application_id });
-  }
-
-  async create(entity: ResumeDetailsEntity) {
-    return this.db.create(entity);
-  }
-
-  async update(id: string, entity: Partial<ResumeDetailsEntity>) {
-    return this.db.update(id, entity);
   }
 
   async upsert(entity: Partial<ResumeDetailsEntity> & { job_application_id: string }) {
@@ -21,7 +16,7 @@ export class ResumeDetailsRepository {
     const existing = await this.findOneByJobApplication(entity.job_application_id);
     if (existing) {
       console.log("Existing resume details", existing);
-      return this.update(existing._id, entity);
+      return this.update({ id: existing._id, ...entity });
     }
     console.log("Creating new resume details", entity);
     return this.create(new ResumeDetailsEntity(entity));

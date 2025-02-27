@@ -1,9 +1,13 @@
-import { NotionClient } from "../../vendors/notion/notion.client";
+import { NotionDatabaseAdapter } from "../../vendors/notion/notion-database-adapter";
+import { Database } from "../database";
 import { CompanyEntity } from "../entities/company.entity";
+import { BaseRepository } from "./base.repository";
 
 type CreateCompanyRequest = Omit<CompanyEntity, "id">;
-export class CompanyRepository {
-  constructor(private readonly client: NotionClient = new NotionClient()) {}
+export class CompanyRepository extends BaseRepository<CompanyEntity> {
+  constructor(db: Database<CompanyEntity> = new NotionDatabaseAdapter(CompanyEntity)) {
+    super(db);
+  }
 
   async findOneMatchingCompany({
     name,
@@ -45,56 +49,10 @@ export class CompanyRepository {
       or: [...filterOptions],
     };
 
-    const response = await this.client.databases.query({
-      database_id: CompanyEntity.DatabaseId,
-      filter: filter,
-    });
-
-    if (response.results.length > 0) {
-      return this.notionRowToCompanyEntity(response.results[0]);
-    }
-
-    return null;
+    return await this.findOne(filter);
   }
 
   async createCompany(company: CreateCompanyRequest) {
-    const notionRow = this.companyEntityToNotionRow(company);
-    const response = await this.client.pages.create(notionRow);
-
-    return this.notionRowToCompanyEntity(response);
-  }
-
-  private notionRowToCompanyEntity(row: any): CompanyEntity {
-    const { id, properties } = row;
-
-    return new CompanyEntity({
-      id,
-      name: properties.Name.title[0].plain_text,
-      website_url: properties["Website"].url,
-      linkedin_url: properties["LinkedIn"].url,
-      is_draft: properties["Is Draft"].checkbox,
-    });
-  }
-
-  private companyEntityToNotionRow(company: CreateCompanyRequest) {
-    return {
-      parent: {
-        database_id: CompanyEntity.DatabaseId,
-      },
-      properties: {
-        Name: { title: [{ text: { content: company.name } }] },
-        ...(company.website_url && {
-          Website: {
-            url: company.website_url,
-          },
-        }),
-        ...(company.linkedin_url && {
-          LinkedIn: {
-            url: company.linkedin_url,
-          },
-        }),
-        ...(company.is_draft && { "Is Draft": { checkbox: company.is_draft } }),
-      },
-    };
+    return this.create(company);
   }
 }

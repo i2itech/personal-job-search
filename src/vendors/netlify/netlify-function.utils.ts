@@ -4,7 +4,7 @@ export function getFunctionParams(context: Context) {
   return context.params;
 }
 
-export function getFunctionBody(req: Request) {
-  const body = req.json();
+export async function getFunctionBody(req: Request) {
+  const body = await req.json();
   return body;
 }

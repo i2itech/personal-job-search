@@ -1,228 +1,127 @@
-import { OpenAPIRegistry, OpenApiGeneratorV3, extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import { OpenAPIRegistry, RouteConfig, extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import { RouteParameter } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
 import { z } from "zod";
+import { HttpDtoType, HttpMethod } from "../../shared/types/http.types";
+import { getNetlifyFunctionHttpControllerMetadata, getNetlifyHttpMethod } from "./decorators";
+import { NetlifyFunctionController } from "./netlify-function.controller";
+import { BodyRequest, NetlifyHttpMethodResponse, OpenApiRegisterPathModel, QueryRequest } from "./netlify.types";
 
 extendZodWithOpenApi(z);
 
-import appConfig from "../../app/config";
-import {
-  CreateJobApplicationRequestSchema,
-  CreateJobApplicationResponseSchema,
-  GenerateCoverLetterRequestSchema,
-  GenerateCoverLetterResponseSchema,
-  GenerateResumeRequestSchema,
-  GenerateResumeResponseSchema,
-  GetJobApplicationResponseSchema,
-  UpsertResumeDetailsRequestSchema,
-  UpsertResumeDetailsResponseSchema,
-} from "../../job-application/types";
 export class NetlifyFunctionOpenApiService {
   constructor() {}
 
-  getOpenApiSchema() {
+  getOpenApiDefinitions(netlifyControllers: (typeof NetlifyFunctionController)[]) {
     // Create registry instance
     const registry = new OpenAPIRegistry();
 
-    // for (const controller of controllers) {
-    //   const instance = new controller();
-    //   const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(controller);
+    const controllers = this.getControllerSchemas(netlifyControllers);
 
-    //   const publicMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(controller))
-    //     .filter(method => method !== 'constructor' && typeof (instance as any)[method] === 'function');
-    //   const httpMethods = publicMethdsgetNetlifyHttpMethod(controller, controllerMetadata.method);
-    // }
+    for (const controller of controllers) {
+      const sharedProps = {
+        operationId: controller.id,
+        method: controller.method.toLowerCase() as RouteConfig["method"],
+        path: controller.path as RouteConfig["path"],
+        description: controller.description,
+      };
 
-    // Define API paths
-    registry.registerPath({
-      method: "post",
-      operationId: "createJobApplication",
-      path: "/api/v1/job-application",
-      description: "Create a new job application",
-      request: {
-        body: {
-          content: {
-            "application/json": {
-              schema: CreateJobApplicationRequestSchema.openapi("CreateJobApplicationRequest"),
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Job application created successfully",
-          content: {
-            "application/json": {
-              schema: CreateJobApplicationResponseSchema.openapi("CreateJobApplicationResponse"),
-            },
-          },
-        },
-        500: {
-          description: "Server error",
-          content: {
-            "application/json": {
-              schema: z.object({
-                error: z.string(),
-              }),
-            },
-          },
-        },
-      },
-    });
+      const method = controller.method as HttpMethod;
+      switch (method) {
+        case HttpMethod.GET:
+        case HttpMethod.DELETE:
+          registry.registerPath({
+            ...sharedProps,
+            request: this.mapQueryRequest(controller.request),
+            responses: this.mapResponses([controller.responses.success, ...controller.responses.errors]),
+          });
+          break;
+        case HttpMethod.POST:
+        case HttpMethod.PUT:
+        case HttpMethod.PATCH:
+          registry.registerPath({
+            ...sharedProps,
+            request: this.mapBodyRequest(controller.request),
+            responses: this.mapResponses([controller.responses.success, ...controller.responses.errors]),
+          });
+          break;
+        default:
+          throw new Error(`Unsupported HTTP method: ${method}`);
+      }
+    }
 
-    registry.registerPath({
-      method: "post",
-      operationId: "generateResume",
-      path: "/api/v1/resume/generate",
-      description: "Generate the resume for a job application",
-      request: {
-        body: {
-          content: {
-            "application/json": {
-              schema: GenerateResumeRequestSchema.openapi("GenerateResumeRequest"),
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Job application imported successfully",
-          content: {
-            "application/json": {
-              schema: GenerateResumeResponseSchema.openapi("GenerateResumeResponse"),
-            },
-          },
-        },
-        500: {
-          description: "Server error",
-          content: {
-            "application/json": {
-              schema: z.object({
-                error: z.string(),
-              }),
-            },
-          },
-        },
-      },
-    });
+    return registry.definitions;
+  }
 
-    registry.registerPath({
-      method: "post",
-      operationId: "generateCoverLetter",
-      path: "/api/v1/cover-letter",
-      description: "Generate a cover letter for a job application",
-      request: {
-        body: {
-          content: {
-            "application/json": {
-              schema: GenerateCoverLetterRequestSchema.openapi("GenerateCoverLetterRequest"),
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Cover letter generated successfully",
-          content: {
-            "application/json": {
-              schema: GenerateCoverLetterResponseSchema.openapi("GenerateCoverLetterResponse"),
-            },
-          },
-        },
-        500: {
-          description: "Server error",
-          content: {
-            "application/json": {
-              schema: z.object({
-                error: z.string(),
-              }),
-            },
-          },
-        },
-      },
-    });
+  getControllerSchemas(controllers: (typeof NetlifyFunctionController)[]): OpenApiRegisterPathModel[] {
+    let metadata: OpenApiRegisterPathModel[] = [];
+    for (const controller of controllers) {
+      // const instance = new (controller.prototype.constructor as any)();
+      const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(controller);
 
-    registry.registerPath({
-      method: "get",
-      operationId: "getJobApplication",
-      path: "/api/v1/job-application/{id}",
-      description: "Get a job application by ID",
-      request: {
-        params: z.object({
-          id: z.string().openapi({
-            description: "The ID of the job application",
-            example: "123e4567-e89b-12d3-a456-426614174000 or 123e4567e89b12d3a456426614174000",
-          }),
-        }),
-      },
-      responses: {
-        200: {
-          description: "Job application imported successfully",
-          content: {
-            "application/json": {
-              schema: GetJobApplicationResponseSchema.openapi("GetJobApplicationResponse"),
-            },
-          },
-        },
-        500: {
-          description: "Server error",
-          content: {
-            "application/json": {
-              schema: z.object({
-                error: z.string(),
-              }),
-            },
-          },
-        },
-      },
-    });
+      const prototype = controller.prototype as any;
+      const propertNames = Object.getOwnPropertyNames(prototype);
+      const publicFunctions = propertNames.filter(
+        (property) => property !== "constructor" && typeof prototype[property] === "function"
+      );
 
-    registry.registerPath({
-      method: "post",
-      operationId: "upsertResumeDetails",
-      path: "/api/v1/resume",
-      description: "Update the resume details for a job application",
-      request: {
-        body: {
-          content: {
-            "application/json": {
-              schema: UpsertResumeDetailsRequestSchema.openapi("UpsertResumeDetailsRequest"),
-            },
-          },
-        },
-      },
-      responses: {
-        200: {
-          description: "Resume details updated successfully",
-          content: {
-            "application/json": {
-              schema: UpsertResumeDetailsResponseSchema.openapi("UpsertResumeDetailsResponse"),
-            },
-          },
-        },
-        500: {
-          description: "Server error",
-          content: {
-            "application/json": {
-              schema: z.object({
-                error: z.string(),
-              }),
-            },
-          },
-        },
-      },
-    });
+      for (const functionName of publicFunctions) {
+        const httpMethod = getNetlifyHttpMethod(controller, functionName);
+        if (!httpMethod) {
+          continue;
+        }
 
-    const generator = new OpenApiGeneratorV3(registry.definitions);
-    return generator.generateDocument({
-      openapi: "3.1.0",
-      info: {
-        title: "Job Application API",
-        version: "1.0.0",
+        let path = `${controllerMetadata.path}${httpMethod.metadata.path ? `${httpMethod.metadata.path}` : ""}`;
+        path = path.replace(/:([^/]+)/g, "{$1}");
+        const id = `${path}-${httpMethod.metadata.method}`;
+
+        metadata.push({
+          ...httpMethod.metadata,
+          id: id,
+          path: path,
+        });
+      }
+    }
+
+    return metadata;
+  }
+
+  mapResponse(response: NetlifyHttpMethodResponse) {
+    return {
+      [response.statusCode]: {
+        description: response.description,
+        content: { [response.type]: { schema: response.schema } },
       },
-      servers: [
-        {
-          url: appConfig().app.server_base_url,
-        },
-      ],
-    });
+    };
+  }
+
+  mapResponses(responses: NetlifyHttpMethodResponse[]) {
+    const responseMap = responses.map((response) => this.mapResponse(response));
+    return Object.assign({}, ...responseMap);
+  }
+
+  mapBodyRequest(request: BodyRequest) {
+    const params = request.params as RouteParameter;
+
+    let body = undefined;
+    if (request.body && "type" in request.body && "schema" in request.body) {
+      const schema = request.body.schema;
+      const type = request.body.type || HttpDtoType.JSON;
+      body = { content: { [type]: { schema } } };
+    } else if (request.body) {
+      const schema = request.body;
+      const type = HttpDtoType.JSON;
+      body = { content: { [type]: { schema } } };
+    }
+
+    return { params, body };
+  }
+
+  mapQueryRequest(request: QueryRequest) {
+    if (!request || !(request.params || request.query)) {
+      return undefined;
+    }
+    const params = request.params as RouteParameter;
+    const query = request.query as RouteParameter;
+    return { params, query };
   }
 }

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { BaseController } from "../../shared/base-components/base.controller";
 import { HttpDtoType, HttpMethod, HttpStatusCode } from "../../shared/types/http.types";
-import { NetlifyFunctionHttpController, NetlifyHttpMethod } from "../../vendors/netlify/netlify-function.decorator";
+import { NetlifyFunctionHttpController, NetlifyHttpMethod } from "../../vendors/netlify/decorators";
 import { OpenApiService } from "./open-api.service";
 
 @NetlifyFunctionHttpController({

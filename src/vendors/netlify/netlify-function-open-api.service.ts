@@ -3,6 +3,7 @@ import { z } from "zod";
 
 extendZodWithOpenApi(z);
 
+import appConfig from "../../app/config";
 import {
   CreateJobApplicationRequestSchema,
   CreateJobApplicationResponseSchema,
@@ -14,13 +15,21 @@ import {
   UpsertResumeDetailsRequestSchema,
   UpsertResumeDetailsResponseSchema,
 } from "../../job-application/types";
-import appConfig from "../config";
 export class NetlifyFunctionOpenApiService {
   constructor() {}
 
   getOpenApiSchema() {
     // Create registry instance
     const registry = new OpenAPIRegistry();
+
+    // for (const controller of controllers) {
+    //   const instance = new controller();
+    //   const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(controller);
+
+    //   const publicMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(controller))
+    //     .filter(method => method !== 'constructor' && typeof (instance as any)[method] === 'function');
+    //   const httpMethods = publicMethdsgetNetlifyHttpMethod(controller, controllerMetadata.method);
+    // }
 
     // Define API paths
     registry.registerPath({

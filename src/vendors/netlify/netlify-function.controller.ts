@@ -1,6 +1,6 @@
 import { Context } from "@netlify/functions";
 import { HttpMethod } from "../../shared/types/http.types";
-import { getNetlifyHttpMethod } from "./netlify-function.decorator";
+import { getNetlifyHttpMethod } from "./decorators";
 
 export class NetlifyFunctionController {
   httpMethods: Record<HttpMethod, (...args: any) => Promise<any>>;

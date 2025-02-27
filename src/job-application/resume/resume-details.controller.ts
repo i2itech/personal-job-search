@@ -1,10 +1,6 @@
 import { BaseController as BaseController } from "../../shared/base-components/base.controller";
 import { HttpMethod, HttpStatusCode, HttpDtoType } from "../../shared/types/http.types";
-import {
-  Body,
-  NetlifyFunctionHttpController,
-  NetlifyHttpMethod,
-} from "../../vendors/netlify/netlify-function.decorator";
+import { Body, NetlifyFunctionHttpController, NetlifyHttpMethod } from "../../vendors/netlify/decorators";
 import {
   UpsertResumeDetailsRequest,
   UpsertResumeDetailsRequestSchema,

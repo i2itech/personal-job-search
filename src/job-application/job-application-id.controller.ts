@@ -3,12 +3,7 @@ import { HttpMethod } from "../shared/types/http.types";
 import { BaseController as BaseController } from "../shared/base-components/base.controller";
 import { HttpStatusCode } from "../shared/types/http.types";
 import { HttpDtoType } from "../shared/types/http.types";
-import {
-  Body,
-  NetlifyFunctionHttpController,
-  NetlifyHttpMethod,
-  Params,
-} from "../vendors/netlify/netlify-function.decorator";
+import { Body, NetlifyFunctionHttpController, NetlifyHttpMethod, Params } from "../vendors/netlify/decorators";
 import { JobApplicationService } from "./job-application.service";
 import {
   GetJobApplicationResponseSchema,

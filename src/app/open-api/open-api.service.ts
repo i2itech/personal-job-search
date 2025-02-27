@@ -1,5 +1,3 @@
-import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
-import { z } from "zod";
 import { NetlifyFunctionOpenApiService } from "../../vendors/netlify/netlify-function-open-api.service";
 
 export class OpenApiService {

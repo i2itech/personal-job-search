@@ -1,5 +1,10 @@
-import { OpenApiGeneratorV3, OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
+import { OpenAPIRegistry, OpenApiGeneratorV3, extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import { z } from "zod";
+
+extendZodWithOpenApi(z);
+
 import {
+  CreateJobApplicationRequestSchema,
   CreateJobApplicationResponseSchema,
   GenerateCoverLetterRequestSchema,
   GenerateCoverLetterResponseSchema,
@@ -8,22 +13,12 @@ import {
   GetJobApplicationResponseSchema,
   UpsertResumeDetailsRequestSchema,
   UpsertResumeDetailsResponseSchema,
-} from "../job-application/types";
-import { CreateJobApplicationRequestSchema } from "../job-application/types";
-import appConfig from "./config";
-import { z } from "zod";
-import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
-
-extendZodWithOpenApi(z);
-
-export class OpenApiService {
+} from "../../job-application/types";
+import appConfig from "../config";
+export class NetlifyFunctionOpenApiService {
   constructor() {}
 
-  getSchema() {
-    return this.getAPISchema();
-  }
-
-  getAPISchema() {
+  getOpenApiSchema() {
     // Create registry instance
     const registry = new OpenAPIRegistry();
 

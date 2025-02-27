@@ -1,4 +1,4 @@
-import { BaseController as BaseController } from "../app/base.controller";
+import { BaseController as BaseController } from "../shared/base-components/base.controller";
 import { Body, NetlifyHttpMethod, Params } from "../vendors/netlify/netlify-function.decorator";
 import { JobApplicationService } from "./job-application.service";
 import { CreateJobApplicationRequest } from "./types";

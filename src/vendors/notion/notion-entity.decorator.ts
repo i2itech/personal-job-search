@@ -25,24 +25,12 @@ interface NotionEntityPropertyOptions {
   notionKey?: string;
 }
 
-export const NOTION_ENTITY_KEY = "notion:entity";
+const NOTION_ENTITY_KEY = Symbol("notion:entity");
+const NOTION_METADATA_KEY = Symbol("notion:property");
 
-export function NotionEntity(options: NotionEntityOptions) {
+export function NotionEntity(options: NotionEntityOptions): ClassDecorator {
   return function (target: Function) {
     Reflect.defineMetadata(NOTION_ENTITY_KEY, options, target);
-  };
-}
-
-const notionMetadataKey = Symbol("notionProperty");
-
-export function NotionEntityProperty(options: NotionEntityPropertyOptions) {
-  return function (target: any, propertyKey: string) {
-    const properties = Reflect.getMetadata(notionMetadataKey, target) || {};
-    properties[propertyKey] = {
-      ...options,
-      notionKey: options.notionKey || propertyKey,
-    };
-    Reflect.defineMetadata(notionMetadataKey, properties, target);
   };
 }
 
@@ -54,6 +42,17 @@ export function getNotionEntityMetadata(target: Function): NotionEntityOptions {
   return metadata;
 }
 
+export function NotionEntityProperty(options: NotionEntityPropertyOptions): PropertyDecorator {
+  return function (target: any, propertyKey: string | symbol) {
+    const properties = Reflect.getMetadata(NOTION_METADATA_KEY, target) || {};
+    properties[propertyKey] = {
+      ...options,
+      notionKey: options.notionKey || propertyKey,
+    };
+    Reflect.defineMetadata(NOTION_METADATA_KEY, properties, target);
+  };
+}
+
 export function getNotionProperties(target: any): Record<string, NotionEntityPropertyOptions> {
-  return Reflect.getMetadata(notionMetadataKey, target) || {};
+  return Reflect.getMetadata(NOTION_METADATA_KEY, target) || {};
 }

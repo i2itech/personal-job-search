@@ -1,4 +1,4 @@
-import { BaseController as BaseController } from "../../app/base.controller";
+import { BaseController as BaseController } from "../../shared/base-components/base.controller";
 import { Body, NetlifyHttpMethod } from "../../vendors/netlify/netlify-function.decorator";
 import { UpsertResumeDetailsRequest } from "../types";
 import { ResumeService } from "./resume.service";

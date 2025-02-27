@@ -1,30 +1,46 @@
-import "reflect-metadata";
 import { Context } from "@netlify/functions";
+import "reflect-metadata";
+import { HttpMethod } from "../../shared/types/http.types";
 import { NetlifyFunctionController } from "./netlify-function.controller";
 import { getFunctionBody, getFunctionParams } from "./netlify-function.utils";
-import { HttpMethod } from "./netlify.types";
+import {
+  NetlifyHttpControllerMetadata,
+  NetlifyHttpMethodMetadata,
+  NetlifyHttpMethods,
+  NetlifyHttpMethod,
+} from "./netlify.types";
 
-export enum NetlifyHttpMethodParamType {
-  PARAMS = "params",
-  BODY = "body",
-  QUERY = "query",
+// Define metadata keys as symbols
+const FUNCTION_HTTP_CONTROLLER_KEY = Symbol("netlify:httpController");
+const PARAMS_METADATA_KEY = Symbol("netlify:params");
+const HTTP_METHODS_METADATA_KEY = Symbol("netlify:httpMethods");
+
+export function NetlifyFunctionHttpController(metadata: NetlifyHttpControllerMetadata): ClassDecorator {
+  return function (target: Object) {
+    Reflect.defineMetadata(FUNCTION_HTTP_CONTROLLER_KEY, metadata, target);
+  };
 }
 
-export function NetlifyHttpMethod(method: string): MethodDecorator {
+export function getNetlifyFunctionHttpControllerMetadata(target: Object): NetlifyHttpControllerMetadata {
+  const metadata = Reflect.getMetadata(FUNCTION_HTTP_CONTROLLER_KEY, target);
+  if (!metadata) {
+    throw new Error(`No Netlify function http controller metadata found for ${target.constructor.name}`);
+  }
+  return metadata;
+}
+
+export function NetlifyHttpMethod<T extends HttpMethod>(metadata: NetlifyHttpMethodMetadata<T>): MethodDecorator {
   return function (target: Object, propertyKey: string | symbol | undefined, descriptor: PropertyDescriptor) {
     if (propertyKey === undefined) {
       throw new Error("propertyKey cannot be undefined");
     }
 
-    // Store the original method
     const originalMethod = descriptor.value;
 
-    // Create a new method that will handle parameter injection
     descriptor.value = async function (req: Request, context: Context) {
-      // Create new instance of the controller
       const instance = new (target.constructor as any)();
+      const params = Reflect.getMetadata(PARAMS_METADATA_KEY, target, propertyKey.toString()) || [];
 
-      const params = Reflect.getMetadata("params", target, propertyKey.toString()) || [];
       const args = await Promise.all(
         params.map(async (type: string) => {
           switch (type) {
@@ -38,17 +54,23 @@ export function NetlifyHttpMethod(method: string): MethodDecorator {
         })
       );
 
-      // Call the method on the new instance
       return originalMethod.apply(instance, args);
     };
 
-    // Store the method in the httpMethods map
+    // Store using symbol-based metadata key
     const controller = target.constructor as typeof NetlifyFunctionController;
-    controller.prototype.httpMethods = controller.prototype.httpMethods || {};
-    controller.prototype.httpMethods[method as HttpMethod] = descriptor.value;
+    const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller.prototype) || {};
+    httpMethods[metadata.method] = { handler: descriptor.value, metadata };
+    Reflect.defineMetadata(HTTP_METHODS_METADATA_KEY, httpMethods, controller.prototype);
 
     return descriptor;
   };
+}
+
+export function getNetlifyHttpMethod(target: Object, method: HttpMethod): NetlifyHttpMethod | undefined {
+  const controller = target.constructor as typeof NetlifyFunctionController;
+  const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller.prototype) || {};
+  return httpMethods[method];
 }
 
 export function Params(): ParameterDecorator {

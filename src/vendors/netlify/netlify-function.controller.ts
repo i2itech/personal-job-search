@@ -1,6 +1,7 @@
 import { Context } from "@netlify/functions";
 import { HttpMethod } from "../../shared/types/http.types";
 import { getNetlifyFunctionHttpControllerMetadata, getNetlifyHttpMethodByPath } from "./decorators";
+import { getFunctionPath } from "./netlify-function.utils";
 
 export class NetlifyFunctionController {
   httpMethods: Record<HttpMethod, (...args: any) => Promise<any>>;
@@ -8,8 +9,7 @@ export class NetlifyFunctionController {
   async handler(req: Request, context: Context) {
     const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(this);
 
-    let path = req.url;
-    path = path.replace(controllerMetadata.path, "");
+    const path = getFunctionPath(req, controllerMetadata.path);
 
     const httpMethod = getNetlifyHttpMethodByPath(this, path, req.method.toUpperCase() as HttpMethod);
     if (!httpMethod) {

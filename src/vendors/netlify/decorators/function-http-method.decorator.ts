@@ -1,7 +1,7 @@
 import { Context } from "@netlify/functions";
 import { HttpMethod } from "../../../shared/types/http.types";
 import { NetlifyFunctionController } from "../netlify-function.controller";
-import { getFunctionBody, getFunctionParams } from "../netlify-function.utils";
+import { getFunctionBody, getFunctionParams, getUrlMatchingRegex } from "../netlify-function.utils";
 import { NetlifyHttpMethod, NetlifyHttpMethodMetadata, NetlifyHttpMethods } from "../netlify.types";
 import { getParams } from "./function-http-method-params.decorator";
 import { getNetlifyFunctionHttpControllerMetadata, setFunctionMetadata } from "./function-http-controller.decorator";
@@ -81,6 +81,12 @@ export function getNetlifyHttpMethodByPath(
   controller = controller || (target as typeof NetlifyFunctionController);
 
   const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
-  const methodKey = getMethodKey({ path, method });
-  return httpMethods[methodKey];
+  const incomingMethodKey = getMethodKey({ path, method });
+  for (const existingMethodKey in httpMethods) {
+    const pathRegex = getUrlMatchingRegex(existingMethodKey);
+    if (pathRegex.test(incomingMethodKey)) {
+      return httpMethods[existingMethodKey];
+    }
+  }
+  return undefined;
 }

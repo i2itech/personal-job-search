@@ -10,13 +10,16 @@ export async function getFunctionBody(req: Request) {
 }
 
 export function getFunctionPath(req: Request, controllerPath: string) {
-  let path = new URL(req.url).pathname;
+  const urlPath = new URL(req.url).pathname;
+  let path = urlPath;
   const routeRegex = getUrlMatchingRegex(controllerPath);
   // Remove the greedy .* and just match from the start
-  console.log("path", path, routeRegex.source);
   const match = path.match(new RegExp(`^${routeRegex.source}`));
   if (!match) {
-    throw new Error("URL does not match the expected pattern");
+    console.error("URL does not match the expected pattern. Are you sure the controller and method path are correct");
+    console.error("controller path", controllerPath);
+    console.error("request url path", urlPath);
+    throw new Error("URL does not match the expected pattern. Are you sure the controller and method path are correct");
   }
 
   path = path.replace(new RegExp(`^${routeRegex.source}`), "");

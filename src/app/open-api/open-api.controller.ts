@@ -5,7 +5,7 @@ import { NetlifyFunctionHttpController, NetlifyHttpMethod } from "../../vendors/
 import { OpenApiService } from "./open-api.service";
 
 @NetlifyFunctionHttpController({
-  path: "/openapi.json",
+  path: "/api/v1/openapi.json",
   description: "OpenAPI schema",
 })
 export class OpenApiController extends BaseController {

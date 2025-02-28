@@ -39,13 +39,14 @@ export function NetlifyHttpMethod(metadata: NetlifyHttpMethodMetadata): MethodDe
     const controller = target.constructor as typeof NetlifyFunctionController;
     const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
     httpMethods[propertyKey.toString()] = { handler: descriptor.value, metadata };
+    httpMethods[metadata.method] = { handler: descriptor.value, metadata };
     Reflect.defineMetadata(HTTP_METHODS_METADATA_KEY, httpMethods, controller);
 
     return descriptor;
   };
 }
 
-export function getNetlifyHttpMethod(target: Object, functionName: string): NetlifyHttpMethod | undefined {
+export function getNetlifyHttpMethodByFunction(target: Object, functionName: string): NetlifyHttpMethod | undefined {
   let controller: typeof NetlifyFunctionController | undefined;
   if (target instanceof NetlifyFunctionController) {
     controller = target.constructor as typeof NetlifyFunctionController;
@@ -55,4 +56,16 @@ export function getNetlifyHttpMethod(target: Object, functionName: string): Netl
 
   const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
   return httpMethods[functionName];
+}
+
+export function getNetlifyHttpMethodByMethod(target: Object, method: HttpMethod): NetlifyHttpMethod | undefined {
+  let controller: typeof NetlifyFunctionController | undefined;
+  if (target instanceof NetlifyFunctionController) {
+    controller = target.constructor as typeof NetlifyFunctionController;
+  }
+
+  controller = controller || (target as typeof NetlifyFunctionController);
+
+  const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
+  return httpMethods[method];
 }

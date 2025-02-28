@@ -2,7 +2,7 @@ import { OpenAPIRegistry, RouteConfig, extendZodWithOpenApi } from "@asteasoluti
 import { RouteParameter } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
 import { z } from "zod";
 import { HttpDtoType, HttpMethod } from "../../shared/types/http.types";
-import { getNetlifyFunctionHttpControllerMetadata, getNetlifyHttpMethod } from "./decorators";
+import { getNetlifyFunctionHttpControllerMetadata, getNetlifyHttpMethodByFunction } from "./decorators";
 import { NetlifyFunctionController } from "./netlify-function.controller";
 import { BodyRequest, NetlifyHttpMethodResponse, OpenApiRegisterPathModel, QueryRequest } from "./netlify.types";
 
@@ -65,7 +65,7 @@ export class NetlifyFunctionOpenApiService {
       );
 
       for (const functionName of publicFunctions) {
-        const httpMethod = getNetlifyHttpMethod(controller, functionName);
+        const httpMethod = getNetlifyHttpMethodByFunction(controller, functionName);
         if (!httpMethod) {
           continue;
         }

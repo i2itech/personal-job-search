@@ -2,7 +2,7 @@ import { z } from "zod";
 import { HttpDtoType, HttpMethod, HttpStatusCode } from "../../../shared/types/http.types";
 import { NetlifyFunctionController } from "../netlify-function.controller";
 import { Body, Params } from "./function-http-method-params.decorator";
-import { NetlifyHttpMethod, getNetlifyHttpMethod } from "./function-http-method.decorator";
+import { NetlifyHttpMethod, getNetlifyHttpMethodByFunction } from "./function-http-method.decorator";
 
 // Mock class for testing
 class TestController extends NetlifyFunctionController {
@@ -35,14 +35,14 @@ describe("NetlifyHttpMethod Decorator", () => {
   });
 
   it("should decorate method and store metadata", () => {
-    const method = getNetlifyHttpMethod(TestController, "testMethod");
+    const method = getNetlifyHttpMethodByFunction(TestController, "testMethod");
     expect(method).toBeDefined();
     expect(method?.metadata.method).toBe(HttpMethod.POST);
   });
 
   it("should execute decorated method with correct parameters", async () => {
     const controller = new TestController();
-    const method = getNetlifyHttpMethod(controller, "testMethod");
+    const method = getNetlifyHttpMethodByFunction(controller, "testMethod");
 
     const result = await method?.handler(mockRequest, mockContext);
 
@@ -69,7 +69,7 @@ describe("NetlifyHttpMethod Decorator", () => {
   });
 
   it("should return undefined for non-existent HTTP method", () => {
-    const method = getNetlifyHttpMethod(new TestController(), "undeclaredMethod");
+    const method = getNetlifyHttpMethodByFunction(new TestController(), "undeclaredMethod");
     expect(method).toBeUndefined();
   });
 });

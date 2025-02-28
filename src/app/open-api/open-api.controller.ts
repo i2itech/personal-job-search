@@ -5,7 +5,7 @@ import { NetlifyFunctionHttpController, NetlifyHttpMethod } from "../../vendors/
 import { OpenApiService } from "./open-api.service";
 
 @NetlifyFunctionHttpController({
-  path: "/open-api",
+  path: "/openapi.json",
 })
 export class OpenApiController extends BaseController {
   constructor(private readonly openApiService: OpenApiService = new OpenApiService()) {

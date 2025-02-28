@@ -8,7 +8,7 @@ import { OpenApiService } from "./open-api.service";
   path: "/api/v1/openapi.json",
   description: "OpenAPI schema",
 })
-export class OpenApiController extends BaseController {
+export default class OpenApiController extends BaseController {
   constructor(private readonly openApiService: OpenApiService = new OpenApiService()) {
     super();
   }

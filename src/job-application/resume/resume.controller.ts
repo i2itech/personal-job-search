@@ -16,7 +16,7 @@ import { ResumeService } from "./resume.service";
   path: "/api/v1/resume",
   description: "Resume generate API",
 })
-export class ResumeController extends BaseController {
+export default class ResumeController extends BaseController {
   constructor(private readonly resumeService: ResumeService = new ResumeService()) {
     super();
   }

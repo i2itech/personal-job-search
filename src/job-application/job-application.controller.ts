@@ -24,7 +24,7 @@ export const JobApplicationIdParamSchema = z.object({ id: z.string() }).openapi(
   path: "/api/v1/job-application",
   description: "Job application API",
 })
-export class JobApplicationController extends BaseController {
+export default class JobApplicationController extends BaseController {
   constructor(private readonly jobApplicationService: JobApplicationService = new JobApplicationService()) {
     super();
   }

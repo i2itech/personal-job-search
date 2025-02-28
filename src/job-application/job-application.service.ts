@@ -45,7 +45,7 @@ export class JobApplicationService {
     const updatedApplication = await this.opportunityRepository.updateOpportunity({
       ...application,
       id,
-      date_applied: application.date_applied ? new Date(application.date_applied) : undefined,
+      date_applied: application.date_applied,
     });
     // Return the updated job application
     return updatedApplication;

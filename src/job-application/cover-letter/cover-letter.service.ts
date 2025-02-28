@@ -9,7 +9,8 @@ import { generateCoverLetterTemplate } from "./cover-letter-template";
 export class CoverLetterService {
   constructor(
     private readonly opportunityRepository: OpportunityRepository = new OpportunityRepository(),
-    private googleDriveClient: GoogleDriveClient = new GoogleDriveClient()
+    private googleDriveClient: GoogleDriveClient = new GoogleDriveClient(),
+    private puppeteerClient: PuppeteerClient = new PuppeteerClient()
   ) {}
 
   async generate(request: GenerateCoverLetterRequest) {
@@ -21,7 +22,7 @@ export class CoverLetterService {
     let coverLetter: Buffer;
     try {
       const coverLetterTemplate = generateCoverLetterTemplate(request);
-      coverLetter = await PuppeteerClient.createPDF(coverLetterTemplate);
+      coverLetter = await this.puppeteerClient.createPDF(coverLetterTemplate);
     } catch (error) {
       console.error(error);
       throw new Error("Failed to generate cover letter");
@@ -39,7 +40,7 @@ export class CoverLetterService {
 
       coverLetterFile = await this.googleDriveClient.uploadFile({
         name: fileName,
-        folderId: appConfig.job_application.google_drive.cover_letter_folder_id,
+        folderId: appConfig().job_application.google_drive.cover_letter_folder_id,
         mimeType: "application/pdf",
         body: coverLetter,
       });

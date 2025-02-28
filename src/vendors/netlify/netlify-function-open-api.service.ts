@@ -70,14 +70,14 @@ export class NetlifyFunctionOpenApiService {
           continue;
         }
 
-        let path = `${controllerMetadata.path}${httpMethod.metadata.path ? `${httpMethod.metadata.path}` : ""}`;
+        let path = `${controllerMetadata.path}`;
         path = path.replace(/:([^/]+)/g, "{$1}");
         const id = `${path}-${httpMethod.metadata.method}`;
 
         metadata.push({
           ...httpMethod.metadata,
-          id: id,
-          path: path,
+          id,
+          path,
         });
       }
     }

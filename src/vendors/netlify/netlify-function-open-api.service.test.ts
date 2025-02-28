@@ -5,28 +5,11 @@ import { Body, NetlifyFunctionHttpController, NetlifyHttpMethod, Params, Query }
 import { NetlifyFunctionOpenApiService } from "./netlify-function-open-api.service";
 
 @NetlifyFunctionHttpController({
-  path: "/test",
+  path: "/test/:someId",
 })
 class TestController extends BaseController {
   @NetlifyHttpMethod({
     method: HttpMethod.GET,
-    description: "Test Get",
-    request: {},
-    responses: {
-      success: {
-        statusCode: HttpStatusCode.OK,
-        description: "Test Get",
-        type: HttpDtoType.JSON,
-        schema: z.object({}),
-      },
-      errors: [],
-    },
-  })
-  async getTest() {}
-
-  @NetlifyHttpMethod({
-    method: HttpMethod.GET,
-    path: "/test/:someId/:someOtherId",
     description: "Test Get With Params",
     request: {
       query: z.object({
@@ -62,7 +45,6 @@ class TestController extends BaseController {
 
   @NetlifyHttpMethod({
     method: HttpMethod.POST,
-    path: "/test/:someId",
     description: "Test Post",
     request: {
       params: z.object({
@@ -94,46 +76,18 @@ describe("NetlifyFunctionOpenApiService", () => {
     const service = new NetlifyFunctionOpenApiService();
     const definitions = service.getOpenApiDefinitions(controllers);
     expect(definitions).toBeDefined();
-    expect(definitions.length).toBe(3);
-  });
-
-  it("should create open api definitions for get without path", () => {
-    const service = new NetlifyFunctionOpenApiService();
-    const definitions = service.getOpenApiDefinitions(controllers);
-    expect(definitions).toBeDefined();
-    expect(definitions.length).toBe(3);
-    expect(definitions[0]).toEqual({
-      type: "route",
-      route: {
-        operationId: "/test-GET",
-        method: "get",
-        path: "/test",
-        description: "Test Get",
-        responses: {
-          [HttpStatusCode.OK]: {
-            description: "Test Get",
-            content: {
-              [HttpDtoType.JSON]: {
-                schema: expect.any(z.Schema),
-              },
-            },
-          },
-        },
-      },
-    });
+    expect(definitions.length).toBe(2);
   });
 
   it("should create open api definitions for get with path", () => {
     const service = new NetlifyFunctionOpenApiService();
     const definitions = service.getOpenApiDefinitions(controllers);
-    expect(definitions).toBeDefined();
-    expect(definitions.length).toBe(3);
-    expect(definitions[1]).toEqual({
+    expect(definitions[0]).toEqual({
       type: "route",
       route: {
-        operationId: "/test/test/{someId}/{someOtherId}-GET",
+        operationId: "/test/{someId}-GET",
         method: "get",
-        path: "/test/test/{someId}/{someOtherId}",
+        path: "/test/{someId}",
         description: "Test Get With Params",
         request: {
           query: expect.any(z.Schema),
@@ -164,14 +118,12 @@ describe("NetlifyFunctionOpenApiService", () => {
   it("should create open api definitions for post ", () => {
     const service = new NetlifyFunctionOpenApiService();
     const definitions = service.getOpenApiDefinitions(controllers);
-    expect(definitions).toBeDefined();
-    expect(definitions.length).toBe(3);
-    expect(definitions[2]).toEqual({
+    expect(definitions[1]).toEqual({
       type: "route",
       route: {
-        operationId: "/test/test/{someId}-POST",
+        operationId: "/test/{someId}-POST",
         method: "post",
-        path: "/test/test/{someId}",
+        path: "/test/{someId}",
         description: "Test Post",
         request: {
           params: expect.any(z.Schema),

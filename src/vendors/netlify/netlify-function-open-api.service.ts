@@ -5,6 +5,8 @@ import { HttpDtoType, HttpMethod } from "../../shared/types/http.types";
 import { getNetlifyFunctionHttpControllerMetadata } from "./decorators";
 import { NetlifyFunctionController } from "./netlify-function.controller";
 import { BodyRequest, NetlifyHttpMethodResponse, OpenApiRegisterPathModel, QueryRequest } from "./netlify.types";
+import { formatString } from "../../shared/utils/string.utils";
+import { StringFormat } from "../../shared/utils";
 
 extendZodWithOpenApi(z);
 
@@ -31,8 +33,8 @@ export class NetlifyFunctionOpenApiService {
         case HttpMethod.DELETE:
           registry.registerPath({
             ...sharedProps,
-            request: this.mapQueryRequest(controller.request),
-            responses: this.mapResponses([controller.responses.success, ...controller.responses.errors]),
+            request: this.mapQueryRequest(controller),
+            responses: this.mapResponses(controller),
           });
           break;
         case HttpMethod.POST:
@@ -40,8 +42,8 @@ export class NetlifyFunctionOpenApiService {
         case HttpMethod.PATCH:
           registry.registerPath({
             ...sharedProps,
-            request: this.mapBodyRequest(controller.request),
-            responses: this.mapResponses([controller.responses.success, ...controller.responses.errors]),
+            request: this.mapBodyRequest(controller),
+            responses: this.mapResponses(controller),
           });
           break;
         default:
@@ -58,6 +60,7 @@ export class NetlifyFunctionOpenApiService {
       // const instance = new (controller.prototype.constructor as any)();
       const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(controller);
 
+      console.log("methodMetadata", controllerMetadata.httpMethodFunctions);
       for (const functionName in controllerMetadata.httpMethodFunctions) {
         const methodMetadata = controllerMetadata.httpMethodFunctions[functionName];
         if (!methodMetadata) {
@@ -66,12 +69,23 @@ export class NetlifyFunctionOpenApiService {
 
         let path = `${controllerMetadata.path}${methodMetadata.path ? `${methodMetadata.path}` : ""}`;
         path = path.replace(/:([^/]+)/g, "{$1}").replace(/\/$/, "");
-        const id = `${path}-${methodMetadata.method}`;
 
+        let id = path
+          .replace(/api\/v\d+\/?/g, "") // Remove "api/v{number}" pattern
+          .replace(/[/-]/g, " ") // Replace both "/" and "-" with spaces
+          .replace(/[^a-zA-Z0-9\s]/g, "") // Remove special characters (keep letters, numbers, spaces)
+          .replace(/\s+/g, " ") // Normalize spaces (remove extra spaces)
+          .trim(); // Trim leading/trailing spaces
+        id = `${id} ${methodMetadata.method}`;
+
+        const name = formatString(id, StringFormat.PASCAL_CASE);
+
+        console.log("id", id);
         metadata.push({
           ...methodMetadata,
           id,
           path,
+          name,
         });
       }
     }
@@ -79,43 +93,48 @@ export class NetlifyFunctionOpenApiService {
     return metadata;
   }
 
-  mapResponse(response: NetlifyHttpMethodResponse) {
+  mapResponse(response: NetlifyHttpMethodResponse, controller: OpenApiRegisterPathModel) {
     return {
       [response.statusCode]: {
         description: response.description,
-        content: { [response.type]: { schema: response.schema } },
+        content: {
+          [response.type]: { schema: response.schema.openapi(`${controller.name}Response${response.statusCode}`) },
+        },
       },
     };
   }
 
-  mapResponses(responses: NetlifyHttpMethodResponse[]) {
-    const responseMap = responses.map((response) => this.mapResponse(response));
+  mapResponses(controller: OpenApiRegisterPathModel) {
+    const responses = [controller.responses.success, ...controller.responses.errors];
+    const responseMap = responses.map((response) => this.mapResponse(response, controller));
     return Object.assign({}, ...responseMap);
   }
 
-  mapBodyRequest(request: BodyRequest) {
+  mapBodyRequest(controller: OpenApiRegisterPathModel & { request: BodyRequest }) {
+    const request = controller.request;
     const params = request.params as RouteParameter;
 
     let body = undefined;
     if (request.body && "type" in request.body && "schema" in request.body) {
-      const schema = request.body.schema;
+      const schema = request.body.schema.openapi(`${controller.name}Body`);
       const type = request.body.type || HttpDtoType.JSON;
       body = { content: { [type]: { schema } } };
     } else if (request.body) {
-      const schema = request.body;
+      const schema = request.body.openapi(`${controller.name}Body`);
       const type = HttpDtoType.JSON;
       body = { content: { [type]: { schema } } };
     }
 
-    return { params, body };
+    return { params: params?.openapi(`${controller.name}Params`), body };
   }
 
-  mapQueryRequest(request: QueryRequest) {
+  mapQueryRequest(controller: OpenApiRegisterPathModel & { request: QueryRequest }) {
+    const request = controller.request;
     if (!request || !(request.params || request.query)) {
       return undefined;
     }
-    const params = request.params as RouteParameter;
-    const query = request.query as RouteParameter;
+    const params = request.params?.openapi(`${controller.name}Params`) as RouteParameter;
+    const query = request.query?.openapi(`${controller.name}Query`) as RouteParameter;
     return { params, query };
   }
 }

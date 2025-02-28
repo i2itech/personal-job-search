@@ -5,6 +5,7 @@ import { HttpMethod, HttpDtoType, HttpStatusCode } from "../../shared/types/http
 export type OpenApiRegisterPathModel = NetlifyHttpMethodMetadata & {
   id: string;
   path: string;
+  name: string;
 };
 
 // Decorator metadata types

@@ -1,10 +1,10 @@
 import { Config, Context } from "@netlify/functions";
-import { ResumeGenerateController } from "../../src/job-application/resume/resume-generate.controller";
+import { ResumeController } from "../../src/job-application/resume/resume.controller";
 
 export const config: Config = {
   path: "/api/v1/resume/generate",
 };
 
 export default async (req: Request, context: Context) => {
-  return new ResumeGenerateController().handler(req, context);
+  return new ResumeController().handler(req, context);
 };

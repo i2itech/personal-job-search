@@ -12,13 +12,10 @@ export class ResumeDetailsRepository extends BaseRepository<ResumeDetailsEntity>
   }
 
   async upsert(entity: Partial<ResumeDetailsEntity> & { job_application_id: string }) {
-    console.log("Upserting resume details", entity);
     const existing = await this.findOneByJobApplication(entity.job_application_id);
     if (existing) {
-      console.log("Existing resume details", existing);
       return this.update({ id: existing._id, ...entity });
     }
-    console.log("Creating new resume details", entity);
     return this.create(new ResumeDetailsEntity(entity));
   }
 }

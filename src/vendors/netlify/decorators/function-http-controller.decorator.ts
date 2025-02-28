@@ -17,12 +17,10 @@ export function NetlifyFunctionHttpController(metadata: NetlifyHttpControllerMet
 export function getNetlifyFunctionHttpControllerMetadata(target: Object): NetlifyHttpControllerMetadata {
   let controller: typeof NetlifyFunctionController | undefined;
   if (target instanceof NetlifyFunctionController) {
-    console.log("target is NetlifyFunctionController", target.constructor.prototype);
     controller = target.constructor as typeof NetlifyFunctionController;
   }
   controller = controller || (target as typeof NetlifyFunctionController);
   const metadata = Reflect.getMetadata(FUNCTION_HTTP_CONTROLLER_KEY, controller);
-  console.log("metadata", metadata);
   if (!metadata) {
     const targetName = (target as Function).name;
     throw new Error(`No Netlify function http controller metadata found for ${targetName}`);

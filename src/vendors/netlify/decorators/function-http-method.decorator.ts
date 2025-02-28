@@ -4,6 +4,7 @@ import { NetlifyFunctionController } from "../netlify-function.controller";
 import { getFunctionBody, getFunctionParams } from "../netlify-function.utils";
 import { NetlifyHttpMethod, NetlifyHttpMethodMetadata, NetlifyHttpMethods } from "../netlify.types";
 import { getParams } from "./function-http-method-params.decorator";
+import { getNetlifyFunctionHttpControllerMetadata, setFunctionMetadata } from "./function-http-controller.decorator";
 
 const HTTP_METHODS_METADATA_KEY = Symbol("netlify:httpMethods");
 
@@ -37,13 +38,22 @@ export function NetlifyHttpMethod(metadata: NetlifyHttpMethodMetadata): MethodDe
 
     // Store using symbol-based metadata key
     const controller = target.constructor as typeof NetlifyFunctionController;
+    setFunctionMetadata(controller, propertyKey.toString(), metadata);
+
     const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
-    httpMethods[propertyKey.toString()] = { handler: descriptor.value, metadata };
-    httpMethods[metadata.method] = { handler: descriptor.value, metadata };
+    const methodKey = getMethodKey(metadata);
+    httpMethods[methodKey] = { handler: descriptor.value, metadata };
     Reflect.defineMetadata(HTTP_METHODS_METADATA_KEY, httpMethods, controller);
 
     return descriptor;
   };
+}
+
+function getMethodKey(metadata: { path?: string; method: HttpMethod }) {
+  if (!!metadata.path && metadata.path !== "/") {
+    return `${metadata.path}-${metadata.method}`;
+  }
+  return metadata.method;
 }
 
 export function getNetlifyHttpMethodByFunction(target: Object, functionName: string): NetlifyHttpMethod | undefined {
@@ -58,7 +68,11 @@ export function getNetlifyHttpMethodByFunction(target: Object, functionName: str
   return httpMethods[functionName];
 }
 
-export function getNetlifyHttpMethodByMethod(target: Object, method: HttpMethod): NetlifyHttpMethod | undefined {
+export function getNetlifyHttpMethodByPath(
+  target: Object,
+  path: string,
+  method: HttpMethod
+): NetlifyHttpMethod | undefined {
   let controller: typeof NetlifyFunctionController | undefined;
   if (target instanceof NetlifyFunctionController) {
     controller = target.constructor as typeof NetlifyFunctionController;
@@ -67,5 +81,6 @@ export function getNetlifyHttpMethodByMethod(target: Object, method: HttpMethod)
   controller = controller || (target as typeof NetlifyFunctionController);
 
   const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
-  return httpMethods[method];
+  const methodKey = getMethodKey({ path, method });
+  return httpMethods[methodKey];
 }

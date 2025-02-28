@@ -14,7 +14,3 @@ export function formatString(str: string, format: StringFormat) {
       return str.toLowerCase().replace(StringRegex.MULTIPLE_SPACES, "_").replace(StringRegex.MULTIPLE_UNDERSCORES, "_");
   }
 }
-
-export function removeSpecialCharacters(str: string) {
-  return str.replace(StringRegex.SPECIAL_CHARACTERS, "");
-}

@@ -1,10 +1,15 @@
-import { NetlifyHttpControllerMetadata } from "../netlify.types";
+import { NetlifyHttpControllerMetadata, NetlifyHttpMethodMetadata } from "../netlify.types";
 
 const FUNCTION_HTTP_CONTROLLER_KEY = Symbol("netlify:httpController");
 
 export function NetlifyFunctionHttpController(metadata: NetlifyHttpControllerMetadata): ClassDecorator {
   return function (target: Object) {
-    Reflect.defineMetadata(FUNCTION_HTTP_CONTROLLER_KEY, metadata, target);
+    let controllerMetadata = Reflect.getMetadata(FUNCTION_HTTP_CONTROLLER_KEY, target) || {};
+    controllerMetadata = {
+      ...controllerMetadata,
+      ...metadata,
+    };
+    Reflect.defineMetadata(FUNCTION_HTTP_CONTROLLER_KEY, controllerMetadata, target);
   };
 }
 
@@ -15,4 +20,13 @@ export function getNetlifyFunctionHttpControllerMetadata(target: Object): Netlif
     throw new Error(`No Netlify function http controller metadata found for ${targetName}`);
   }
   return metadata;
+}
+
+export function setFunctionMetadata(target: Object, functionName: string, metadata: NetlifyHttpMethodMetadata) {
+  const controllerMetadata = Reflect.getMetadata(FUNCTION_HTTP_CONTROLLER_KEY, target) || {};
+  controllerMetadata.httpMethodFunctions = {
+    ...controllerMetadata.httpMethodFunctions,
+    [functionName]: metadata,
+  };
+  Reflect.defineMetadata(FUNCTION_HTTP_CONTROLLER_KEY, controllerMetadata, target);
 }

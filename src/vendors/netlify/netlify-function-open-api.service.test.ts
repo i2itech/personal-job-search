@@ -6,6 +6,7 @@ import { NetlifyFunctionOpenApiService } from "./netlify-function-open-api.servi
 
 @NetlifyFunctionHttpController({
   path: "/test/:someId",
+  description: "Test Controller",
 })
 class TestController extends BaseController {
   @NetlifyHttpMethod({

@@ -9,7 +9,9 @@ export type OpenApiRegisterPathModel = NetlifyHttpMethodMetadata & {
 
 // Decorator metadata types
 export interface NetlifyHttpControllerMetadata {
+  description: string;
   path: string;
+  httpMethodFunctions?: Record<string, NetlifyHttpMethodMetadata>;
 }
 
 export type QueryRequest = {
@@ -57,6 +59,7 @@ export type NetlifyHttpMethodMetadata =
       method: HttpMethod.POST | HttpMethod.PUT | HttpMethod.PATCH;
       description: string;
       request: BodyRequest;
+      path?: string;
       responses: {
         success: NetlifyHttpMethodResponse;
         errors: NetlifyHttpMethodResponse[];

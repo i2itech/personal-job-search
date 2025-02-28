@@ -2,7 +2,7 @@ import { OpenAPIRegistry, RouteConfig, extendZodWithOpenApi } from "@asteasoluti
 import { RouteParameter } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
 import { z } from "zod";
 import { HttpDtoType, HttpMethod } from "../../shared/types/http.types";
-import { getNetlifyFunctionHttpControllerMetadata, getNetlifyHttpMethodByFunction } from "./decorators";
+import { getNetlifyFunctionHttpControllerMetadata } from "./decorators";
 import { NetlifyFunctionController } from "./netlify-function.controller";
 import { BodyRequest, NetlifyHttpMethodResponse, OpenApiRegisterPathModel, QueryRequest } from "./netlify.types";
 
@@ -58,24 +58,18 @@ export class NetlifyFunctionOpenApiService {
       // const instance = new (controller.prototype.constructor as any)();
       const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(controller);
 
-      const prototype = controller.prototype as any;
-      const propertNames = Object.getOwnPropertyNames(prototype);
-      const publicFunctions = propertNames.filter(
-        (property) => property !== "constructor" && typeof prototype[property] === "function"
-      );
-
-      for (const functionName of publicFunctions) {
-        const httpMethod = getNetlifyHttpMethodByFunction(controller, functionName);
-        if (!httpMethod) {
+      for (const functionName in controllerMetadata.httpMethodFunctions) {
+        const methodMetadata = controllerMetadata.httpMethodFunctions[functionName];
+        if (!methodMetadata) {
           continue;
         }
 
-        let path = `${controllerMetadata.path}`;
-        path = path.replace(/:([^/]+)/g, "{$1}");
-        const id = `${path}-${httpMethod.metadata.method}`;
+        let path = `${controllerMetadata.path}${methodMetadata.path ? `${methodMetadata.path}` : ""}`;
+        path = path.replace(/:([^/]+)/g, "{$1}").replace(/\/$/, "");
+        const id = `${path}-${methodMetadata.method}`;
 
         metadata.push({
-          ...httpMethod.metadata,
+          ...methodMetadata,
           id,
           path,
         });

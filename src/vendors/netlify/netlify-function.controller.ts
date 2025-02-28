@@ -1,15 +1,19 @@
 import { Context } from "@netlify/functions";
 import { HttpMethod } from "../../shared/types/http.types";
-import { getNetlifyHttpMethodByMethod } from "./decorators";
+import { getNetlifyFunctionHttpControllerMetadata, getNetlifyHttpMethodByPath } from "./decorators";
 
 export class NetlifyFunctionController {
   httpMethods: Record<HttpMethod, (...args: any) => Promise<any>>;
 
   async handler(req: Request, context: Context) {
-    const method = req.method as HttpMethod;
-    const httpMethod = getNetlifyHttpMethodByMethod(this, method);
+    const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(this);
+
+    let path = req.url;
+    path = path.replace(controllerMetadata.path, "");
+
+    const httpMethod = getNetlifyHttpMethodByPath(this, path, req.method.toUpperCase() as HttpMethod);
     if (!httpMethod) {
-      throw new Error(`Method ${method} not implemented`);
+      throw new Error(`Method ${req.method} not implemented`);
     }
     const handler = httpMethod.handler;
 

@@ -1,5 +1,5 @@
 import { Config, Context } from "@netlify/functions";
-import { OpenApiController } from "../../src/app/open-api.controller";
+import { OpenApiController } from "../../src/app/open-api/open-api.controller";
 
 export const config: Config = {
   path: "/api/v1/openapi.json",

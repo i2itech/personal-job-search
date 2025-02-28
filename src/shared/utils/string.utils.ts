@@ -1,5 +1,7 @@
 export enum StringFormat {
   SNAKE_CASE = "snake_case",
+  FIRST_UPPER_CASE = "first_upper_case",
+  PASCAL_CASE = "pascal_case",
 }
 
 export const StringRegex = {
@@ -12,9 +14,23 @@ export function formatString(str: string, format: StringFormat) {
   switch (format) {
     case StringFormat.SNAKE_CASE:
       return str.toLowerCase().replace(StringRegex.MULTIPLE_SPACES, "_").replace(StringRegex.MULTIPLE_UNDERSCORES, "_");
+    case StringFormat.FIRST_UPPER_CASE:
+      return capitalizeFirstLetter(str);
+    case StringFormat.PASCAL_CASE:
+      return str
+        .toLowerCase()
+        .replace(StringRegex.MULTIPLE_SPACES, "_")
+        .replace(StringRegex.MULTIPLE_UNDERSCORES, "_")
+        .split("_")
+        .map(capitalizeFirstLetter)
+        .join("");
   }
 }
 
 export function removeSpecialCharacters(str: string) {
   return str.replace(StringRegex.SPECIAL_CHARACTERS, "");
+}
+
+export function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }

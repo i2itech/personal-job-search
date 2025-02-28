@@ -10,6 +10,7 @@ import { ResumeService } from "./resume.service";
 
 @NetlifyFunctionHttpController({
   path: "/api/v1/resume-details",
+  description: "Resume details API",
 })
 export class ResumeDetailsController extends BaseController {
   constructor(private readonly resumeService: ResumeService = new ResumeService()) {

@@ -14,6 +14,7 @@ import {
 
 @NetlifyFunctionHttpController({
   path: "/job-application/{id}",
+  description: "Job application API",
 })
 export class JobApplicationIdController extends BaseController {
   constructor(private readonly jobApplicationService: JobApplicationService = new JobApplicationService()) {

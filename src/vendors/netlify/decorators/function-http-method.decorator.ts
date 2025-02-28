@@ -73,6 +73,7 @@ export function getNetlifyHttpMethodByPath(
   path: string,
   method: HttpMethod
 ): NetlifyHttpMethod | undefined {
+  console.log("getNetlifyHttpMethodByPath", target, path, method);
   let controller: typeof NetlifyFunctionController | undefined;
   if (target instanceof NetlifyFunctionController) {
     controller = target.constructor as typeof NetlifyFunctionController;
@@ -83,8 +84,9 @@ export function getNetlifyHttpMethodByPath(
   const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
   const incomingMethodKey = getMethodKey({ path, method });
   for (const existingMethodKey in httpMethods) {
+    console.log("existingMethodKey", existingMethodKey);
     const pathRegex = getUrlMatchingRegex(existingMethodKey);
-    if (pathRegex.test(incomingMethodKey)) {
+    if (new RegExp(`^${pathRegex.source}$`).test(incomingMethodKey)) {
       return httpMethods[existingMethodKey];
     }
   }

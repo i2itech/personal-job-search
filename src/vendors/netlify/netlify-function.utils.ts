@@ -10,17 +10,16 @@ export async function getFunctionBody(req: Request) {
 }
 
 export function getFunctionPath(req: Request, controllerPath: string) {
-  let path = req.url;
-  // Convert route pattern to regex pattern
+  let path = new URL(req.url).pathname;
   const routeRegex = getUrlMatchingRegex(controllerPath);
-  // Changed to match from start but allow content after
-  const match = path.match(new RegExp(`^.*${routeRegex.source}`));
+  // Remove the greedy .* and just match from the start
+  console.log("path", path, routeRegex.source);
+  const match = path.match(new RegExp(`^${routeRegex.source}`));
   if (!match) {
     throw new Error("URL does not match the expected pattern");
   }
 
-  path = path.replace(new RegExp(`^.*${routeRegex.source}`), "");
-
+  path = path.replace(new RegExp(`^${routeRegex.source}`), "");
   return path;
 }
 
@@ -29,5 +28,5 @@ export function getUrlMatchingRegex(path: string) {
     .replace(/:[^/]+/g, "([^/]+)") // Convert :param to capture group
     .replace(/\//g, "\\/"); // Escape forward slashes
 
-  return new RegExp(`^${routePattern}$`);
+  return new RegExp(routePattern);
 }

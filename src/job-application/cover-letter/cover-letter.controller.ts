@@ -10,6 +10,7 @@ import { CoverLetterService } from "./cover-letter.service";
 
 @NetlifyFunctionHttpController({
   path: "/api/v1/cover-letter",
+  description: "Cover letter API",
 })
 export class CoverLetterController extends BaseController {
   constructor(private readonly coverLetterService: CoverLetterService = new CoverLetterService()) {

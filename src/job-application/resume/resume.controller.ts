@@ -1,4 +1,5 @@
 import { BaseController } from "../../shared/base-components/base.controller";
+import { ErrorResponseSchema } from "../../shared/types/common.types";
 import { HttpDtoType, HttpMethod, HttpStatusCode } from "../../shared/types/http.types";
 import { Body, NetlifyFunctionHttpController, NetlifyHttpMethod } from "../../vendors/netlify/decorators";
 import {
@@ -33,7 +34,14 @@ export class ResumeController extends BaseController {
         type: HttpDtoType.JSON,
         schema: UpsertResumeDetailsResponseSchema,
       },
-      errors: [],
+      errors: [
+        {
+          statusCode: HttpStatusCode.BAD_REQUEST,
+          description: "Bad request",
+          type: HttpDtoType.JSON,
+          schema: ErrorResponseSchema,
+        },
+      ],
     },
   })
   public async upsertResumeDetails(@Body() body: UpsertResumeDetailsRequest) {
@@ -54,7 +62,14 @@ export class ResumeController extends BaseController {
         type: HttpDtoType.JSON,
         schema: GenerateResumeResponseSchema,
       },
-      errors: [],
+      errors: [
+        {
+          statusCode: HttpStatusCode.BAD_REQUEST,
+          description: "Bad request",
+          type: HttpDtoType.JSON,
+          schema: ErrorResponseSchema,
+        },
+      ],
     },
   })
   public async generateResume(@Body() body: GenerateResumeRequest) {

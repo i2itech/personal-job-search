@@ -1,14 +1,11 @@
-import { OpenAPIRegistry, RouteConfig, extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import { OpenAPIRegistry, RouteConfig } from "@asteasolutions/zod-to-openapi";
 import { RouteParameter } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
-import { z } from "zod";
 import { HttpDtoType, HttpMethod } from "../../shared/types/http.types";
+import { StringFormat } from "../../shared/utils";
+import { formatString } from "../../shared/utils/string.utils";
 import { getNetlifyFunctionHttpControllerMetadata } from "./decorators";
 import { NetlifyFunctionController } from "./netlify-function.controller";
 import { BodyRequest, NetlifyHttpMethodResponse, OpenApiRegisterPathModel, QueryRequest } from "./netlify.types";
-import { formatString } from "../../shared/utils/string.utils";
-import { StringFormat } from "../../shared/utils";
-
-extendZodWithOpenApi(z);
 
 export class NetlifyFunctionOpenApiService {
   constructor() {}
@@ -98,7 +95,7 @@ export class NetlifyFunctionOpenApiService {
       [response.statusCode]: {
         description: response.description,
         content: {
-          [response.type]: { schema: response.schema.openapi(`${controller.name}Response${response.statusCode}`) },
+          [response.type]: { schema: response.schema },
         },
       },
     };
@@ -116,16 +113,16 @@ export class NetlifyFunctionOpenApiService {
 
     let body = undefined;
     if (request.body && "type" in request.body && "schema" in request.body) {
-      const schema = request.body.schema.openapi(`${controller.name}Body`);
+      const schema = request.body.schema;
       const type = request.body.type || HttpDtoType.JSON;
       body = { content: { [type]: { schema } } };
     } else if (request.body) {
-      const schema = request.body.openapi(`${controller.name}Body`);
+      const schema = request.body;
       const type = HttpDtoType.JSON;
       body = { content: { [type]: { schema } } };
     }
 
-    return { params: params?.openapi(`${controller.name}Params`), body };
+    return { params: params, body };
   }
 
   mapQueryRequest(controller: OpenApiRegisterPathModel & { request: QueryRequest }) {
@@ -133,8 +130,8 @@ export class NetlifyFunctionOpenApiService {
     if (!request || !(request.params || request.query)) {
       return undefined;
     }
-    const params = request.params?.openapi(`${controller.name}Params`) as RouteParameter;
-    const query = request.query?.openapi(`${controller.name}Query`) as RouteParameter;
+    const params = request.params as RouteParameter;
+    const query = request.query as RouteParameter;
     return { params, query };
   }
 }

@@ -13,6 +13,13 @@ import {
   UpdateJobApplicationResponseSchema,
 } from "./types";
 
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import { ErrorResponseSchema } from "../shared/types/common.types";
+
+extendZodWithOpenApi(z);
+
+export const JobApplicationIdParamSchema = z.object({ id: z.string() }).openapi("JobApplicationIdParam");
+
 @NetlifyFunctionHttpController({
   path: "/api/v1/job-application",
   description: "Job application API",
@@ -35,7 +42,14 @@ export class JobApplicationController extends BaseController {
         type: HttpDtoType.JSON,
         schema: CreateJobApplicationResponseSchema,
       },
-      errors: [],
+      errors: [
+        {
+          statusCode: HttpStatusCode.BAD_REQUEST,
+          description: "Bad request",
+          type: HttpDtoType.JSON,
+          schema: ErrorResponseSchema,
+        },
+      ],
     },
   })
   public async create(@Body() body: CreateJobApplicationRequest) {
@@ -51,7 +65,7 @@ export class JobApplicationController extends BaseController {
     description: "Get a job application by id",
     path: "/:id",
     request: {
-      params: z.object({ id: z.string() }),
+      params: JobApplicationIdParamSchema,
     },
     responses: {
       success: {
@@ -60,7 +74,14 @@ export class JobApplicationController extends BaseController {
         type: HttpDtoType.JSON,
         schema: GetJobApplicationResponseSchema,
       },
-      errors: [],
+      errors: [
+        {
+          statusCode: HttpStatusCode.NOT_FOUND,
+          description: "Job application not found",
+          type: HttpDtoType.JSON,
+          schema: ErrorResponseSchema,
+        },
+      ],
     },
   })
   public async getJobApplicationId(@Params() params: { id: string }) {
@@ -72,7 +93,7 @@ export class JobApplicationController extends BaseController {
     description: "Update a job application by id",
     path: "/:id",
     request: {
-      params: z.object({ id: z.string() }),
+      params: JobApplicationIdParamSchema,
       body: UpdateJobApplicationRequestSchema,
     },
     responses: {
@@ -82,7 +103,14 @@ export class JobApplicationController extends BaseController {
         type: HttpDtoType.JSON,
         schema: UpdateJobApplicationResponseSchema,
       },
-      errors: [],
+      errors: [
+        {
+          statusCode: HttpStatusCode.NOT_FOUND,
+          description: "Job application not found",
+          type: HttpDtoType.JSON,
+          schema: ErrorResponseSchema,
+        },
+      ],
     },
   })
   public async updateJobApplication(@Params() params: { id: string }, @Body() body: UpdateJobApplicationRequest) {

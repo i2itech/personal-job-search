@@ -31,6 +31,7 @@ export class BaseRepository<Entity> {
   }
 
   async update(entity: Partial<Entity> & { id: string }): Promise<Entity> {
+    console.log("Updating entity", entity);
     return this.db.update(entity.id, entity);
   }
 }

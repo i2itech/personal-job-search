@@ -8,17 +8,17 @@ type NotionProperties = CreatePageProperties; // Same as UpdatePageProperties
 type NotionPropertyValue = CreatePageProperties[keyof CreatePageProperties];
 
 export class NotionEntityMapper {
-  public toCreatePageParameters<T>(databaseId: string, entity: T): CreatePageParameters {
+  public toCreatePageParameters<T>(databaseId: string, entity: T, EntityClass: new () => T): CreatePageParameters {
     return {
       parent: { database_id: databaseId },
-      properties: this.toNotionProperties(entity) as CreatePageProperties,
+      properties: this.toNotionProperties(entity, EntityClass) as CreatePageProperties,
     };
   }
 
-  public toUpdatePageParameters<T>(id: string, entity: Partial<T>): UpdatePageParameters {
+  public toUpdatePageParameters<T>(id: string, entity: Partial<T>, EntityClass: new () => T): UpdatePageParameters {
     return {
       page_id: id,
-      properties: this.toNotionProperties(entity) as UpdatePageProperties,
+      properties: this.toNotionProperties(entity, EntityClass) as UpdatePageProperties,
     };
   }
 
@@ -112,9 +112,9 @@ export class NotionEntityMapper {
     return { url: file.external.url, name: file.name };
   }
 
-  protected toNotionProperties<T>(entity: T): NotionProperties {
-    console.log("entity", entity);
-    const notionProperties = getNotionProperties(Object.getPrototypeOf(entity));
+  protected toNotionProperties<T>(entity: T, EntityClass: new () => T): NotionProperties {
+    const notionProperties = getNotionProperties(EntityClass.prototype);
+    console.log("notionProperties", notionProperties);
     const properties: NotionProperties = {};
 
     for (const [propertyKey, options] of Object.entries(notionProperties)) {

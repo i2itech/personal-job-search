@@ -35,7 +35,6 @@ export class JobApplicationService {
   }
 
   async update(id: string, application: UpdateJobApplicationRequest) {
-    console.info("Updating job application", id, application);
     // Try to find existing job application for this period
     const existingApplication = await this.findById(id);
     // If not found, throw an error

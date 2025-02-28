@@ -142,7 +142,7 @@ describe("NotionEntityMapper", () => {
       const entity = new TestEntity();
       Object.assign(entity, MOCK_ENTITY_VALUES);
 
-      const result = mapper.toCreatePageParameters(MOCK_DATABASE_ID, entity);
+      const result = mapper.toCreatePageParameters(MOCK_DATABASE_ID, entity, TestEntity);
 
       expect(result).toEqual({
         parent: { database_id: MOCK_DATABASE_ID },
@@ -157,7 +157,7 @@ describe("NotionEntityMapper", () => {
       entity.id = MOCK_PAGE_ID;
       Object.assign(entity, MOCK_ENTITY_VALUES);
 
-      const result = mapper.toUpdatePageParameters(MOCK_PAGE_ID, entity);
+      const result = mapper.toUpdatePageParameters(MOCK_PAGE_ID, entity, TestEntity);
 
       expect(result).toEqual({
         page_id: MOCK_PAGE_ID,

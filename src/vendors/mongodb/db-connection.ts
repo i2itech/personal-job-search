@@ -6,7 +6,6 @@ let isConnected = false;
 async function connectDB() {
   try {
     await mongoose.connect(appConfig().mongodb.url);
-    console.log("MongoDB connected successfully");
     isConnected = true;
 
     // Handle application shutdown
@@ -33,7 +32,6 @@ async function disconnectDB() {
   try {
     await mongoose.disconnect();
     isConnected = false;
-    console.log("MongoDB disconnected successfully");
   } catch (error) {
     console.error("Error while disconnecting MongoDB:", error);
     throw error;

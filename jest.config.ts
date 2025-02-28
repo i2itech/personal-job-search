@@ -16,6 +16,7 @@ const config: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+  testMatch: ["**/*.spec.ts", "**/*.test.ts"],
   setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
   collectCoverage: true,
   coverageDirectory: "coverage",

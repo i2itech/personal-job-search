@@ -8,17 +8,14 @@ export class PuppeteerClient {
     try {
       // Add a small delay to ensure everything is rendered
       const page = await browser.newPage();
-      console.info("New Page Created");
 
       await page.setContent(html, { waitUntil: "domcontentloaded" });
 
-      console.info("Set Content");
       const pdf = await page.pdf({
         format: "Letter",
         margin: { top: "0.5in", right: "0.5in", bottom: "0.5in", left: "0.5in" },
       });
 
-      console.info("PDF Created");
       return Buffer.from(pdf);
     } catch (error) {
       console.error("Error creating PDF");
@@ -36,7 +33,6 @@ export class PuppeteerClient {
       "--no-sandbox",
       "--disable-setuid-sandbox",
     ];
-    console.info("executablePath", executablePath);
     try {
       const browser = await puppeteer.launch({
         executablePath,

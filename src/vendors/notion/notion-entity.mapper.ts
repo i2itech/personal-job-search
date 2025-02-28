@@ -113,6 +113,7 @@ export class NotionEntityMapper {
   }
 
   protected toNotionProperties<T>(entity: T): NotionProperties {
+    console.log("entity", entity);
     const notionProperties = getNotionProperties(Object.getPrototypeOf(entity));
     const properties: NotionProperties = {};
 

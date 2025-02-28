@@ -1,12 +1,11 @@
 import { NotionDatabaseAdapter } from "../../vendors/notion/notion-database-adapter";
-import { NotionClient } from "../../vendors/notion/notion.client";
 import { OpportunityEntity } from "../entities/opportunity.entity";
 import { OpportunityType } from "../types";
 import { BaseRepository } from "./base.repository";
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };
 export class OpportunityRepository extends BaseRepository<OpportunityEntity> {
-  constructor(private readonly client: NotionClient = new NotionClient()) {
+  constructor() {
     super(new NotionDatabaseAdapter(OpportunityEntity));
   }
 

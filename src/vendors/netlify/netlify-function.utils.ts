@@ -28,7 +28,7 @@ export function getFunctionPath(req: Request, controllerPath: string) {
 
 export function getUrlMatchingRegex(path: string) {
   const routePattern = path
-    .replace(/:[^/]+/g, "([^/]+)") // Convert :param to capture group
+    .replace(/:[^/\-]+/g, "([^/\-]+)") // Convert :param to capture group, but don't match hyphens
     .replace(/\//g, "\\/"); // Escape forward slashes
 
   return new RegExp(routePattern);

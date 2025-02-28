@@ -77,7 +77,6 @@ export class NetlifyFunctionOpenApiService {
 
         const name = formatString(id, StringFormat.PASCAL_CASE);
 
-        console.log("id", id);
         metadata.push({
           ...methodMetadata,
           id,

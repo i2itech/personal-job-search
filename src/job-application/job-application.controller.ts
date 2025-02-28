@@ -114,6 +114,6 @@ export class JobApplicationController extends BaseController {
     },
   })
   public async updateJobApplication(@Params() params: { id: string }, @Body() body: UpdateJobApplicationRequest) {
-    return this.jobApplicationService.update(params.id, body);
+    return await this.jobApplicationService.update(params.id, body);
   }
 }

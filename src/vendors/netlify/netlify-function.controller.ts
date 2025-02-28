@@ -12,6 +12,7 @@ export class NetlifyFunctionController {
     const path = getFunctionPath(req, controllerMetadata.path);
 
     const httpMethod = getNetlifyHttpMethodByPath(this, path, req.method.toUpperCase() as HttpMethod);
+    console.log("httpMethod", httpMethod);
     if (!httpMethod) {
       throw new Error(`Method ${req.method} not implemented`);
     }

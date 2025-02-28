@@ -46,8 +46,12 @@ export const CreateJobApplicationResponseSchema = z
 
 // Update Job Application
 export const UpdateJobApplicationRequestSchema = OpportunitySchema.partial()
-  .openapi("UpdateJobApplicationRequest")
-  .describe("Include only the fields you want to update");
+  .omit({
+    id: true,
+    is_draft: true,
+  })
+  .describe("Include only the fields you want to update")
+  .openapi("UpdateJobApplicationRequest");
 export type UpdateJobApplicationRequest = z.infer<typeof UpdateJobApplicationRequestSchema>;
 
 export const UpdateJobApplicationResponseSchema = z

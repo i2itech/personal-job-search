@@ -1,5 +1,6 @@
 [build]
   base = "/"
+  environment = { NODE_VERSION = "20" }
 
 [dev]
   autoLaunch = false
@@ -8,3 +9,6 @@
   node_bundler = "esbuild"
   directory = "netlify/functions"
   external_node_modules = ["@sparticuz/chromium"]
+
+[[plugins]]
+  package = "./netlify-plugin-generate-functions"

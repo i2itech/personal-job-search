@@ -4,7 +4,7 @@
   "description": "Assistant Api for job search",
   "main": "index.js",
   "scripts": {
-    "generate:netlify": "ts-node generate.ts",
+    "generate:netlify": "ts-node src/cli/generate.ts",
     "prebuild": "npm run generate:netlify",
     "predev": "npm run generate:netlify",
     "dev": "netlify dev --port 8888",

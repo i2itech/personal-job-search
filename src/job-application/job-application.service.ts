@@ -32,8 +32,8 @@ export class JobApplicationService {
     // Try to find existing job application for this period
     const existingApplication = await this.findExistingJobApplication(application);
     if (existingApplication) {
-      Logger.error(`Found existing application`);
-      throw new Error("Job application already exists");
+      Logger.warn(`Found existing application`);
+      return existingApplication;
     }
     // If not found, create a new job application
     const newApplication = await this.createNewJobApplication(application);

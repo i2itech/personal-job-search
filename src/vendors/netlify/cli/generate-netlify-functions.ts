@@ -70,8 +70,9 @@ async function generateNetlifyFunctions(options: GenerateNetlifyFunctionsOptions
 
 function generateFunctionName(path: string): string {
   return path
-    .replace(/\//g, "_") // Replace / with underscore
     .replace(/api\/v\d+\//, "") // Remove api/v1/
+    .replace(/\//g, "_") // Replace / with underscore
+    .replace(/\./g, "_") // Replace . with underscore
     .replace(/[^a-zA-Z0-9_-]/g, "")
     .replace(/_+/g, "_") // Replace multiple underscores with single
     .replace(/^_|_$/g, "") // Remove leading/trailing underscores

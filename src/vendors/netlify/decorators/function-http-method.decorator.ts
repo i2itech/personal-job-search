@@ -31,8 +31,9 @@ export function NetlifyHttpMethod(metadata: NetlifyHttpMethodMetadata): MethodDe
               Logger.info("injecting params", params);
               return params;
             case "body":
-              Logger.info("injecting body", getFunctionBody(req));
-              return getFunctionBody(req);
+              const body = await getFunctionBody(req);
+              Logger.info("injecting body", body);
+              return body;
             default:
               return undefined;
           }

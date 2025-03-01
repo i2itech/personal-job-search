@@ -1,10 +1,13 @@
 import { Context } from "@netlify/functions";
+import { getLogger } from "../../../shared/logger.service";
 import { HttpMethod } from "../../../shared/types/http.types";
 import { NetlifyFunctionController } from "../netlify-function.controller";
 import { getFunctionBody, getFunctionParams, getUrlMatchingRegex } from "../netlify-function.utils";
 import { NetlifyHttpMethod, NetlifyHttpMethodMetadata, NetlifyHttpMethods } from "../netlify.types";
+import { setFunctionMetadata } from "./function-http-controller.decorator";
 import { getParams } from "./function-http-method-params.decorator";
-import { getNetlifyFunctionHttpControllerMetadata, setFunctionMetadata } from "./function-http-controller.decorator";
+
+const Logger = getLogger("netlify:http-method:decorator");
 
 const HTTP_METHODS_METADATA_KEY = Symbol("netlify:httpMethods");
 
@@ -24,8 +27,11 @@ export function NetlifyHttpMethod(metadata: NetlifyHttpMethodMetadata): MethodDe
         params.map(async (type: string) => {
           switch (type) {
             case "params":
-              return getFunctionParams(context);
+              const params = getFunctionParams(context);
+              Logger.info("injecting params", params);
+              return params;
             case "body":
+              Logger.info("injecting body", getFunctionBody(req));
               return getFunctionBody(req);
             default:
               return undefined;

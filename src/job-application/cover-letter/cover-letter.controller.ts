@@ -1,4 +1,4 @@
-import { BaseController } from "../../shared/base-components/base.controller";
+import { BaseController } from "../../shared/components/base.controller";
 import { HttpDtoType, HttpMethod, HttpStatusCode } from "../../shared/types/http.types";
 import { Body, NetlifyFunctionHttpController, NetlifyHttpMethod } from "../../vendors/netlify/decorators";
 import {

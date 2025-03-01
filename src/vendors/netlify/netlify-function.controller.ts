@@ -3,40 +3,51 @@ import { HttpMethod } from "../../shared/types/http.types";
 import { getNetlifyFunctionHttpControllerMetadata, getNetlifyHttpMethodByPath } from "./decorators";
 import { getFunctionPath } from "./netlify-function.utils";
 
-export class NetlifyFunctionController {
-  httpMethods: Record<HttpMethod, (...args: any) => Promise<any>>;
+const DEFAULT_HEADERS = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+};
 
+export class NetlifyFunctionController {
   async handler(req: Request, context: Context) {
     const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(this);
-
     const path = getFunctionPath(req, controllerMetadata.path);
 
+    console.log(`[API Request] ${req.method} ${path}`);
+
     const httpMethod = getNetlifyHttpMethodByPath(this, path, req.method.toUpperCase() as HttpMethod);
-    console.log("httpMethod", httpMethod);
     if (!httpMethod) {
-      throw new Error(`Method ${req.method} not implemented`);
+      console.log(`[API Error] Method ${req.method} not implemented for path ${path}`);
+      return new Response(JSON.stringify({ error: `Method ${req.method} not implemented` }), {
+        status: 405,
+        headers: { ...DEFAULT_HEADERS },
+      });
     }
-    const handler = httpMethod.handler;
 
     try {
-      const result = await handler(req, context);
-      return new Response(JSON.stringify(result), {
+      const result = await httpMethod.handler(req, context);
+      const response = new Response(JSON.stringify(result), {
         status: 200,
         headers: {
-          "Content-Type": "application/json",
+          ...DEFAULT_HEADERS,
         },
       });
+
+      console.log(`[API Response] ${req.method} ${path} - Status: 200`);
+      return response;
     } catch (error) {
-      console.error("Error in NetlifyFunctionController:", error);
+      console.error(`[API Error] ${req.method} ${path} - ${error instanceof Error ? error.message : "Unknown error"}`);
+
+      const status = error instanceof Error && "status" in error ? (error.status as number) : 500;
+
       return new Response(
         JSON.stringify({
           error: error instanceof Error ? error.message : "An unknown error occurred",
         }),
         {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
+          status,
+          headers: { ...DEFAULT_HEADERS },
         }
       );
     }

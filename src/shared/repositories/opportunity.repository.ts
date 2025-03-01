@@ -1,9 +1,11 @@
 import { NotionDatabaseAdapter } from "../../vendors/notion/notion-database-adapter";
 import { OpportunityEntity } from "../entities/opportunity.entity";
+import { getLogger } from "../logger.service";
 import { OpportunityType } from "../types";
 import { BaseRepository } from "./base.repository";
 type CreateOpportunityRequest = Omit<OpportunityEntity, "id">;
 type UpdateOpportunityRequest = Partial<OpportunityEntity> & { id: OpportunityEntity["id"] };
+const Logger = getLogger("opportunity:repository");
 export class OpportunityRepository extends BaseRepository<OpportunityEntity> {
   constructor() {
     super(new NotionDatabaseAdapter(OpportunityEntity));
@@ -96,7 +98,10 @@ export class OpportunityRepository extends BaseRepository<OpportunityEntity> {
   }
 
   async createOpportunity(opportunity: CreateOpportunityRequest) {
-    return this.create(opportunity);
+    Logger.debug(`Creating opportunity: ${opportunity.title} - ${opportunity.company_name}`);
+    const createdOpportunity = await this.create(opportunity);
+    Logger.debug(`Created opportunity: ${createdOpportunity}`);
+    return createdOpportunity;
   }
 
   async updateOpportunity(opportunity: UpdateOpportunityRequest) {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseController } from "../../shared/base-components/base.controller";
+import { BaseController } from "../../shared/components/base.controller";
 import { HttpDtoType, HttpMethod, HttpStatusCode } from "../../shared/types/http.types";
 import { Body, NetlifyFunctionHttpController, NetlifyHttpMethod, Params, Query } from "./decorators";
 import { NetlifyFunctionOpenApiService } from "./netlify-function-open-api.service";

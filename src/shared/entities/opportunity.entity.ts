@@ -12,7 +12,7 @@ export class OpportunityEntity implements Opportunity {
     Object.assign(this, partial);
   }
 
-  @NotionEntityProperty({ type: "id", notionKey: "id" })
+  @NotionEntityProperty({ type: "id" })
   id: string;
 
   @NotionEntityProperty({ type: "title", notionKey: "Title" })

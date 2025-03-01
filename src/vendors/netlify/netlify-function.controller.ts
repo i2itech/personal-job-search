@@ -13,10 +13,9 @@ const Logger = getLogger("netlify:function:controller");
 
 export class NetlifyFunctionController {
   async handler(req: Request, context: Context) {
+    Logger.info(`[API Request] ${req.method} ${new URL(req.url).pathname}`);
     const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(this);
     const path = getFunctionPath(req, controllerMetadata.path);
-
-    Logger.info(`[API Request] ${req.method} ${path}`);
 
     const httpMethod = getNetlifyHttpMethodByPath(this, path, req.method.toUpperCase() as HttpMethod);
     if (!httpMethod) {

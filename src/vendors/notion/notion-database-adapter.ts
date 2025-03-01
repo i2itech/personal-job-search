@@ -68,7 +68,6 @@ export class NotionDatabaseAdapter<TEntity> implements Database<TEntity> {
 
   async update(id: string, entity: Partial<TEntity>): Promise<TEntity> {
     const notionData = this.mapper.toUpdatePageParameters(id, entity, this.EntityClass);
-    console.log("notionData", notionData);
     const response = await this.db.update(notionData);
     return this.mapper.toEntity(response, this.EntityClass);
   }

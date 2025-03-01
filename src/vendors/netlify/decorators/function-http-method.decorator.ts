@@ -88,7 +88,6 @@ export function getNetlifyHttpMethodByPath(
 
   const httpMethods: NetlifyHttpMethods = Reflect.getMetadata(HTTP_METHODS_METADATA_KEY, controller) || {};
   const incomingMethodKey = getMethodKey({ path, method });
-  console.log("incomingMethodKey", incomingMethodKey);
   for (const existingMethodKey in httpMethods) {
     const pathRegex = getUrlMatchingRegex(existingMethodKey);
     if (new RegExp(`^${pathRegex.source}$`).test(incomingMethodKey)) {

@@ -57,7 +57,6 @@ export class NetlifyFunctionOpenApiService {
       // const instance = new (controller.prototype.constructor as any)();
       const controllerMetadata = getNetlifyFunctionHttpControllerMetadata(controller);
 
-      console.log("methodMetadata", controllerMetadata.httpMethodFunctions);
       for (const functionName in controllerMetadata.httpMethodFunctions) {
         const methodMetadata = controllerMetadata.httpMethodFunctions[functionName];
         if (!methodMetadata) {

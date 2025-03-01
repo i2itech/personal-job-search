@@ -48,7 +48,6 @@ async function generateNetlifyFunctions(options: GenerateNetlifyFunctionsOptions
     const uniquePaths = new Set<string>();
     Object.entries(controllerMetadata.httpMethodFunctions || {}).map(([_, methodMetaData]) => {
       const fullPath = `${controllerMetadata.path}${methodMetaData.path ? methodMetaData.path : ""}`;
-      console.log("fullPath", fullPath);
       uniquePaths.add(fullPath);
     });
 
@@ -67,8 +66,6 @@ async function generateNetlifyFunctions(options: GenerateNetlifyFunctionsOptions
   for (const config of functionConfigs) {
     await generateFunctionFile(config, functionsDir);
   }
-
-  console.log(`Generated ${functionConfigs.length} Netlify functions`);
 }
 
 function generateFunctionName(path: string): string {

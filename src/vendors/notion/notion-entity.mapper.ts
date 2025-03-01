@@ -1,28 +1,38 @@
 import { CreatePageParameters, UpdatePageParameters } from "@notionhq/client/build/src/api-endpoints";
 import { ExternalFile } from "../../shared/types";
 import { getNotionProperties } from "./notion-entity.decorator";
+import { getLogger } from "../../shared/logger.service";
 
 type CreatePageProperties = CreatePageParameters["properties"];
 type UpdatePageProperties = UpdatePageParameters["properties"];
 type NotionProperties = CreatePageProperties; // Same as UpdatePageProperties
 type NotionPropertyValue = CreatePageProperties[keyof CreatePageProperties];
 
+const Logger = getLogger("notion:entity:mapper");
+
 export class NotionEntityMapper {
   public toCreatePageParameters<T>(databaseId: string, entity: T, EntityClass: new () => T): CreatePageParameters {
-    return {
+    Logger.debug(`Mapping entity to create page parameters: ${JSON.stringify(entity)}`);
+    const parameters = {
       parent: { database_id: databaseId },
       properties: this.toNotionProperties(entity, EntityClass) as CreatePageProperties,
     };
+    Logger.debug(`Created create page parameters: ${JSON.stringify(parameters)}`);
+    return parameters;
   }
 
   public toUpdatePageParameters<T>(id: string, entity: Partial<T>, EntityClass: new () => T): UpdatePageParameters {
-    return {
+    Logger.debug(`Mapping entity to update page parameters: ${JSON.stringify(entity)}`);
+    const parameters = {
       page_id: id,
       properties: this.toNotionProperties(entity, EntityClass) as UpdatePageProperties,
     };
+    Logger.debug(`Created update page parameters: ${JSON.stringify(parameters)}`);
+    return parameters;
   }
 
   public toEntity<T>(row: any, EntityClass: new () => T): T {
+    Logger.debug(`Mapping row to entity: ${JSON.stringify(row)}`);
     const { id, properties } = row;
     const entity = new EntityClass();
     const notionProperties = getNotionProperties(EntityClass.prototype);
@@ -41,6 +51,7 @@ export class NotionEntityMapper {
       (entity as any)[propertyKey] = this.extractNotionValue(notionValue, options.type);
     }
 
+    Logger.debug(`Created entity: ${JSON.stringify(entity)}`);
     return entity;
   }
 
@@ -114,7 +125,6 @@ export class NotionEntityMapper {
 
   protected toNotionProperties<T>(entity: T, EntityClass: new () => T): NotionProperties {
     const notionProperties = getNotionProperties(EntityClass.prototype);
-    console.log("notionProperties", notionProperties);
     const properties: NotionProperties = {};
 
     for (const [propertyKey, options] of Object.entries(notionProperties)) {

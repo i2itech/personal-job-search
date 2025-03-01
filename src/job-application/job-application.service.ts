@@ -62,10 +62,10 @@ export class JobApplicationService {
     return updatedApplication;
   }
 
-  private findExistingJobApplication(application: CreateJobApplicationRequest) {
+  private async findExistingJobApplication(application: CreateJobApplicationRequest) {
     Logger.debug(`Searching for existing job application: ${application.company_name} - ${application.job_title}`);
     // Try to find existing job application for this period
-    const existingApplication = this.opportunityRepository.findOneMatchingOpportunity({
+    const existingApplication = await this.opportunityRepository.findOneMatchingOpportunity({
       type: OpportunityType.JOB_APPLICATION,
       cycle: this.currentCycle,
       title: application.job_title,

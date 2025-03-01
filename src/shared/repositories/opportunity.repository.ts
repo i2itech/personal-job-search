@@ -94,7 +94,7 @@ export class OpportunityRepository extends BaseRepository<OpportunityEntity> {
       or: [...titleCompanyFilter, ...titleCompanyPostingUrlFilter],
     };
 
-    return this.findBy(filter);
+    return this.findOne(filter);
   }
 
   async createOpportunity(opportunity: CreateOpportunityRequest) {

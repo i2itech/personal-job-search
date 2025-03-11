@@ -1,5 +1,10 @@
 import appConfig from "../../app/config";
-import { ResumeDetails, ResumeWorkExperience } from "../../shared/types";
+import {
+  RelevantWorkExperience,
+  RemainingWorkExperience,
+  ResumeDetails,
+  ResumeWorkExperience,
+} from "../../shared/types";
 
 const style = `<style>
     html {
@@ -64,6 +69,7 @@ const style = `<style>
 
 export const generateResumeTemplate = (request: ResumeDetails) => {
   const personalInfo = appConfig().job_application.personal_info;
+  const workExperience = request.work_experience as ResumeWorkExperience;
   return `
 ${style}
 <div>
@@ -94,18 +100,30 @@ ${style}
   </div>
   <div class="section">
     <h2>Work Experience:</h2>
-    ${request.work_experience?.map((workExperience) => generateWorkExperience(workExperience)).join("") || ""}
+    ${workExperience?.relevant?.map((workExperience) => generateRelevantWorkExperience(workExperience)).join("") || ""}
+    ${workExperience?.remaining ? generateRemainingWorkExperience(workExperience.remaining) : ""}
   </div>
 </div>`;
 };
 
-const generateWorkExperience = (workExperience: ResumeWorkExperience) => {
+const generateRelevantWorkExperience = (workExperience: RelevantWorkExperience) => {
   return `<div class="work-experience">
     <h3>${workExperience.company} | ${workExperience.role}</h3>
     <h4>${workExperience.location} | ${workExperience.start_date} - ${workExperience.end_date}</h4>
+    <h5><b>Key Technologies:</b> ${workExperience.key_technologies.join(", ")}</h5>
     <ul>
-        <li><b>Key Technologies: </b>${workExperience.key_technologies.join(", ")}</li>
         ${workExperience.experiences.map((experience) => `<li>${experience}</li>`).join("\n")}
     </ul>
 </div>`;
+};
+
+const generateRemainingWorkExperience = (workExperience: RemainingWorkExperience) => {
+  return `<div class="work-experience">
+  <h3>Additional Software Engineering Experience (${workExperience.start_year} - ${workExperience.end_year})</h3>
+  <h4>Clients: ${workExperience.companies.join(", ")}</h4>
+  <h5><b>Key Technologies:</b> ${workExperience.key_technologies.join(", ")}</h5>
+  <ul>
+    ${workExperience.experiences.map((experience) => `<li>${experience}</li>`).join("\n")}
+  </ul>
+  </div>`;
 };

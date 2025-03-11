@@ -16,14 +16,17 @@ export class ResumeService {
 
   async generateResume(request: GenerateResumeRequest) {
     let resumeDetails = await this.resumeDetailsRepository.findOneByJobApplication(request.job_application_id);
-    if (
-      !resumeDetails ||
-      !resumeDetails.summary ||
-      resumeDetails.skill_sets.length === 0 ||
-      resumeDetails.work_experience.length === 0
-    ) {
-      console.error("Resume details not found");
+    if (!resumeDetails || !resumeDetails.summary || resumeDetails.skill_sets.length === 0) {
+      console.error("Resume details not found", JSON.stringify(resumeDetails, null, 2));
       throw new Error("Resume details not found");
+    }
+
+    console.log("resumeDetails", JSON.stringify(resumeDetails, null, 2));
+
+    if (resumeDetails.work_experience && Array.isArray(resumeDetails.work_experience)) {
+      resumeDetails.work_experience = {
+        relevant: resumeDetails.work_experience,
+      };
     }
 
     let opportunity = await this.opportunityRepository.findOneById(request.job_application_id);

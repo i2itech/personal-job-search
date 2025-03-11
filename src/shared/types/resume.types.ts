@@ -73,10 +73,7 @@ export const ResumeDetailsSchema = z
     skill_sets: z
       .array(ResumeSkillSetSchema)
       .describe("Categorized list of professional skills and competencies, ordered by relevance"),
-    work_experience: z
-      .union([ResumeWorkExperienceSchema, z.array(RelevantWorkExperienceSchema)])
-      .optional()
-      .describe("Work experience details"),
+    work_experience: ResumeWorkExperienceSchema.optional().describe("Work experience details"),
   })
   .openapi("ResumeDetails");
 

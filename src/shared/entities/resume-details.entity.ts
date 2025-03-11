@@ -87,9 +87,6 @@ export class ResumeDetailsEntity extends BaseEntity implements ResumeDetails {
   @prop({ type: () => [ResumeSkillSetEntity], default: [] })
   skill_sets: ResumeSkillSetEntity[];
 
-  @prop({
-    type: () => ResumeWorkExperienceEntity || [RelevantWorkExperienceEntity],
-    required: false,
-  })
-  work_experience?: ResumeWorkExperienceEntity | RelevantWorkExperienceEntity[];
+  @prop({ type: ResumeWorkExperienceEntity, required: false })
+  work_experience?: ResumeWorkExperienceEntity;
 }

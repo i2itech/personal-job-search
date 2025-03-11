@@ -21,6 +21,8 @@ export class ResumeService {
       throw new Error("Resume details not found");
     }
 
+    console.log("resumeDetails", JSON.stringify(resumeDetails, null, 2));
+
     if (resumeDetails.work_experience && Array.isArray(resumeDetails.work_experience)) {
       resumeDetails.work_experience = {
         relevant: resumeDetails.work_experience,

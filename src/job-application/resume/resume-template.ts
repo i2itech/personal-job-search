@@ -42,6 +42,12 @@ const style = `<style>
     font-weight: bold;
     margin: 0 0 2px 0;
   }
+  h5 {
+    color: #000000;
+    font-size: 12px;
+    font-weight: normal;
+    margin: 0 0 2px 0;
+  }
   ul {
     margin: 0;
     padding-left: 12px;
@@ -110,8 +116,8 @@ const generateRelevantWorkExperience = (workExperience: RelevantWorkExperience) 
   return `<div class="work-experience">
     <h3>${workExperience.company} | ${workExperience.role}</h3>
     <h4>${workExperience.location} | ${workExperience.start_date} - ${workExperience.end_date}</h4>
-    <h5><b>Key Technologies:</b> ${workExperience.key_technologies.join(", ")}</h5>
     <ul>
+        <li><b>Key Technologies:</b> ${workExperience.key_technologies.join(", ")}</li>
         ${workExperience.experiences.map((experience) => `<li>${experience}</li>`).join("\n")}
     </ul>
 </div>`;
@@ -119,10 +125,11 @@ const generateRelevantWorkExperience = (workExperience: RelevantWorkExperience) 
 
 const generateRemainingWorkExperience = (workExperience: RemainingWorkExperience) => {
   return `<div class="work-experience">
-  <h3>Additional Software Engineering Experience (${workExperience.start_year} - ${workExperience.end_year})</h3>
-  <h4>Clients: ${workExperience.companies.join(", ")}</h4>
-  <h5><b>Key Technologies:</b> ${workExperience.key_technologies.join(", ")}</h5>
+  <h3>Additional Experience</h3>
+  <h4>Software Engineer | Various Clients (${workExperience.start_year} - ${workExperience.end_year})</h4>
+  <h5><b><i>Clients:</b> ${workExperience.companies.join(", ")}</i></h5>
   <ul>
+    <li><b>Key Technologies:</b> ${workExperience.key_technologies.join(", ")}</li>
     ${workExperience.experiences.map((experience) => `<li>${experience}</li>`).join("\n")}
   </ul>
   </div>`;

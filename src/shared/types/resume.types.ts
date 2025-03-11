@@ -30,7 +30,9 @@ export const RelevantWorkExperienceSchema = z
     role: z.string().describe("Job title or position held"),
     location: z.string().describe("Geographic location of the job (city, country)"),
     start_date: z.string().describe("Employment start date in 'Month Year' format (e.g., 'December 2024')"),
-    end_date: z.string().describe("Employment end date in 'Month Year' format, or 'Present' if current position"),
+    end_date: z
+      .string()
+      .describe("Employment end date in 'Month Year' format (e.g., 'January 2024'), or 'Present' if current position"),
     key_technologies: z.array(z.string()).describe("Primary technologies, tools, and frameworks used in the role"),
     experiences: z.array(z.string()).describe("Key achievements, responsibilities, and notable projects"),
     order: z.number().describe("Display order in resume (lower numbers appear first)"),

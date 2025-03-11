@@ -24,7 +24,7 @@ export const ResumeSkillSetSchema = z
 
 export type ResumeSkillSet = z.infer<typeof ResumeSkillSetSchema>;
 
-export const ResumeWorkExperienceSchema = z
+export const RelevantWorkExperienceSchema = z
   .object({
     company: z.string().describe("Name of the employer or organization"),
     role: z.string().describe("Job title or position held"),
@@ -34,6 +34,30 @@ export const ResumeWorkExperienceSchema = z
     key_technologies: z.array(z.string()).describe("Primary technologies, tools, and frameworks used in the role"),
     experiences: z.array(z.string()).describe("Key achievements, responsibilities, and notable projects"),
     order: z.number().describe("Display order in resume (lower numbers appear first)"),
+  })
+  .openapi("RelevantWorkExperience");
+
+export type RelevantWorkExperience = z.infer<typeof RelevantWorkExperienceSchema>;
+
+export const RemainingWorkExperienceSchema = z
+  .object({
+    companies: z.array(z.string()).describe("List of remaining companies worked at"),
+    start_year: z.number().describe("Start year of the remaining work experience"),
+    end_year: z.number().describe("End year of the remaining work experience"),
+    key_technologies: z.array(z.string()).describe("Primary technologies, tools, and frameworks used in the role"),
+    experiences: z.array(z.string()).describe("Key achievements, responsibilities, and notable projects"),
+  })
+  .describe("Summary of the remaining work experiences beyond the final relevant work experience")
+  .openapi("RemainingWorkExperience");
+
+export type RemainingWorkExperience = z.infer<typeof RemainingWorkExperienceSchema>;
+
+export const ResumeWorkExperienceSchema = z
+  .object({
+    relevant: z.array(RelevantWorkExperienceSchema).describe("Relevant work experiences"),
+    remaining: RemainingWorkExperienceSchema.optional().describe(
+      "Summary of the remaining work experiences beyond the final relevant work experience"
+    ),
   })
   .openapi("ResumeWorkExperience");
 
@@ -50,8 +74,9 @@ export const ResumeDetailsSchema = z
       .array(ResumeSkillSetSchema)
       .describe("Categorized list of professional skills and competencies, ordered by relevance"),
     work_experience: z
-      .array(ResumeWorkExperienceSchema)
-      .describe("Chronological work history showcasing professional experience and achievements"),
+      .union([ResumeWorkExperienceSchema, z.array(RelevantWorkExperienceSchema)])
+      .optional()
+      .describe("Work experience details"),
   })
   .openapi("ResumeDetails");
 

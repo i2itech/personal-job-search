@@ -1,5 +1,12 @@
 import { modelOptions, prop } from "@typegoose/typegoose";
-import { ResumeDetails, ResumeSkillSet, ResumeSkillSetType, ResumeWorkExperience } from "../types";
+import {
+  RelevantWorkExperience,
+  RemainingWorkExperience,
+  ResumeDetails,
+  ResumeSkillSet,
+  ResumeSkillSetType,
+  ResumeWorkExperience,
+} from "../types";
 import { BaseEntity } from "./base.entity";
 
 export class ResumeSkillSetEntity implements ResumeSkillSet {
@@ -13,7 +20,7 @@ export class ResumeSkillSetEntity implements ResumeSkillSet {
   order: number;
 }
 
-export class ResumeWorkExperienceEntity implements ResumeWorkExperience {
+export class RelevantWorkExperienceEntity implements RelevantWorkExperience {
   @prop({ type: String, required: true })
   company: string;
 
@@ -39,6 +46,31 @@ export class ResumeWorkExperienceEntity implements ResumeWorkExperience {
   order: number;
 }
 
+export class RemainingWorkExperienceEntity implements RemainingWorkExperience {
+  @prop({ type: [String], required: true })
+  companies: string[];
+
+  @prop({ type: Number, required: true })
+  start_year: number;
+
+  @prop({ type: Number, required: true })
+  end_year: number;
+
+  @prop({ type: [String], required: true })
+  key_technologies: string[];
+
+  @prop({ type: [String], required: true })
+  experiences: string[];
+}
+
+export class ResumeWorkExperienceEntity implements ResumeWorkExperience {
+  @prop({ type: () => [RelevantWorkExperienceEntity], required: true })
+  relevant: RelevantWorkExperienceEntity[];
+
+  @prop({ type: RemainingWorkExperienceEntity, required: false })
+  remaining?: RemainingWorkExperienceEntity;
+}
+
 @modelOptions({ schemaOptions: { collection: "resume" } })
 export class ResumeDetailsEntity extends BaseEntity implements ResumeDetails {
   constructor(partial: Partial<ResumeDetailsEntity> = {}) {
@@ -55,6 +87,9 @@ export class ResumeDetailsEntity extends BaseEntity implements ResumeDetails {
   @prop({ type: () => [ResumeSkillSetEntity], default: [] })
   skill_sets: ResumeSkillSetEntity[];
 
-  @prop({ type: () => [ResumeWorkExperienceEntity], default: [] })
-  work_experience: ResumeWorkExperienceEntity[];
+  @prop({
+    type: () => ResumeWorkExperienceEntity || [RelevantWorkExperienceEntity],
+    required: false,
+  })
+  work_experience?: ResumeWorkExperienceEntity | RelevantWorkExperienceEntity[];
 }

@@ -110,7 +110,11 @@ export const GenerateResumeResponseSchema = z
 export const GenerateCoverLetterRequestSchema = z
   .object({
     job_application_id: z.string().describe("Unique identifier of the job application to generate cover letter for"),
-    cover_letter: z.string().describe("The content of the cover letter, tailored to the job application"),
+    cover_letter: z
+      .string()
+      .describe(
+        "The content of the cover letter, tailored to the job application. DO NOT include markdown formatting."
+      ),
   })
   .openapi("GenerateCoverLetterRequest");
 

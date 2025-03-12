@@ -6,6 +6,9 @@ import { PuppeteerClient } from "../../vendors/puppeteer/puppeteer.client";
 import { GenerateResumeRequest, UpsertResumeDetailsRequest } from "../types";
 import { generateResumeTemplate } from "./resume-template";
 import { ResumeDetailsRepository } from "../../shared/repositories/resume-details.repository";
+import { getLogger } from "../../shared/logger.service";
+
+const logger = getLogger("ResumeService");
 export class ResumeService {
   constructor(
     private readonly opportunityRepository: OpportunityRepository = new OpportunityRepository(),
@@ -16,17 +19,27 @@ export class ResumeService {
 
   async generateResume(request: GenerateResumeRequest) {
     let resumeDetails = await this.resumeDetailsRepository.findOneByJobApplication(request.job_application_id);
-    if (!resumeDetails || !resumeDetails.summary || resumeDetails.skill_sets.length === 0) {
-      console.error("Resume details not found", JSON.stringify(resumeDetails, null, 2));
+    if (!resumeDetails) {
+      logger.error("Resume details not found", JSON.stringify(resumeDetails, null, 2));
       throw new Error("Resume details not found");
     }
+    if (!resumeDetails.summary || resumeDetails.summary.length === 0) {
+      logger.error("Resume summary is empty", JSON.stringify(resumeDetails, null, 2));
+      throw new Error("Resume summary is empty");
+    }
 
-    console.log("resumeDetails", JSON.stringify(resumeDetails, null, 2));
+    if (!resumeDetails.skill_sets || resumeDetails.skill_sets.length === 0) {
+      logger.error("Resume skill sets are empty", JSON.stringify(resumeDetails, null, 2));
+      throw new Error("Resume skill sets are empty");
+    }
 
-    if (resumeDetails.work_experience && Array.isArray(resumeDetails.work_experience)) {
-      resumeDetails.work_experience = {
-        relevant: resumeDetails.work_experience,
-      };
+    if (
+      !resumeDetails.work_experience ||
+      !resumeDetails.work_experience.relevant ||
+      resumeDetails.work_experience.relevant.length === 0
+    ) {
+      logger.error("Resume work experience is empty", JSON.stringify(resumeDetails, null, 2));
+      throw new Error("Resume work experience is empty");
     }
 
     let opportunity = await this.opportunityRepository.findOneById(request.job_application_id);

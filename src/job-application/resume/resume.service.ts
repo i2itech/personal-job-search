@@ -7,6 +7,8 @@ import { GenerateResumeRequest, UpsertResumeDetailsRequest } from "../types";
 import { generateResumeTemplate } from "./resume-template";
 import { ResumeDetailsRepository } from "../../shared/repositories/resume-details.repository";
 import { getLogger } from "../../shared/logger.service";
+import { ResumeDetailsEntity } from "../../shared/entities/resume-details.entity";
+import { OpportunityEntity } from "../../shared/entities/opportunity.entity";
 
 const logger = getLogger("ResumeService");
 export class ResumeService {
@@ -44,10 +46,16 @@ export class ResumeService {
 
     let opportunity = await this.opportunityRepository.findOneById(request.job_application_id);
     if (!opportunity) {
-      console.error("Opportunity not found");
+      logger.error("Opportunity not found", JSON.stringify(request, null, 2));
       throw new Error("Opportunity not found");
     }
 
+    let resume: Buffer = await this.generateResumePDF(resumeDetails);
+    let resumeFile = await this.uploadResumeToGoogleDrive(resume, opportunity);
+    return this.updateOpportunityResume(request.job_application_id, resumeFile);
+  }
+
+  private async generateResumePDF(resumeDetails: ResumeDetailsEntity) {
     let resume: Buffer;
     try {
       const resumeTemplate = generateResumeTemplate(resumeDetails);
@@ -56,7 +64,10 @@ export class ResumeService {
       console.error(error);
       throw new Error("Failed to generate resume");
     }
+    return resume;
+  }
 
+  private async uploadResumeToGoogleDrive(resume: Buffer, opportunity: OpportunityEntity) {
     let resumeFile: { id: string; name: string };
     try {
       const title = formatString(removeSpecialCharacters(opportunity.title), StringFormat.SNAKE_CASE);
@@ -78,10 +89,14 @@ export class ResumeService {
       throw new Error("Failed to upload resume");
     }
 
+    return resumeFile;
+  }
+
+  private async updateOpportunityResume(job_application_id: string, resumeFile: { id: string; name: string }) {
     try {
       const resumeUrl = await this.googleDriveClient.getFileUrl(resumeFile.id);
-      opportunity = await this.opportunityRepository.updateOpportunity({
-        id: request.job_application_id,
+      let opportunity = await this.opportunityRepository.updateOpportunity({
+        id: job_application_id,
         resume: { url: resumeUrl, name: resumeFile.name },
       });
 

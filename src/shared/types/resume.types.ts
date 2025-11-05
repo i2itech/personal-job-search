@@ -56,7 +56,7 @@ export type RemainingWorkExperience = z.infer<typeof RemainingWorkExperienceSche
 
 export const ResumeWorkExperienceSchema = z
   .object({
-    relevant: z.array(RelevantWorkExperienceSchema).describe("Relevant work experiences"),
+    relevant: z.array(RelevantWorkExperienceSchema).describe("Relevant work experiences ordered by date descending"),
     remaining: RemainingWorkExperienceSchema.optional().describe(
       "Summary of the remaining work experiences beyond the final relevant work experience"
     ),

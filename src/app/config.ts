@@ -35,6 +35,9 @@ const appConfig = () => {
         cover_letter_folder_id: process.env.COVER_LETTER_FOLDER_ID || "",
         resume_folder_id: process.env.RESUME_FOLDER_ID || "",
       },
+      generic_resume_job_id: {
+        "Full Resume": "00000000-0000-0000-0000-000000000000",
+      },
     },
     notion: {
       api_key: process.env.NOTION_API_KEY || "",
